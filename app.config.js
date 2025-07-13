@@ -4,6 +4,7 @@ export default {
     "slug": "pj-classes-app",
     "version": "1.0.0",
     "scheme": "pj-classes-app",
+    "orientation": "default",
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -23,7 +24,6 @@ export default {
       "typedRoutes": true,
       "tsconfigPaths": true
     },
-    "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {

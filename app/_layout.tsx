@@ -1,33 +1,61 @@
 import '../global.css';
 import 'expo-dev-client';
 import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
-import { Icon } from '@roninoss/icons';
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
-import { Link, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Pressable, View } from 'react-native';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
 import { ThemeToggle } from '~/components/ThemeToggle';
-import { cn } from '~/lib/cn';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
 import { useEffect } from 'react';
+import Toast from 'react-native-toast-message';
 import { requestUserPermission, notificationListener } from '~/firebase/notificationService';
+import HeaderIcons from '~/components/HeaderIcons';
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 export default function RootLayout() {
   useInitialAndroidBarSync();
-  const { colorScheme, isDarkColorScheme } = useColorScheme();
+  const { colorScheme, isDarkColorScheme, colors } = useColorScheme();
+
+  const SCREEN_OPTIONS = {
+    animation: 'ios_from_right',
+    headerStyle: {
+      elevation: 0, // Android shadow
+      shadowOpacity: 0, // iOS shadow
+      backgroundColor: colors.background,
+    },
+    headerTitleAlign: 'center',
+    headerTitleStyle: {
+      fontSize: 18,
+      fontWeight: '600',
+    },
+  } as const;
+
+  const MODAL_OPTIONS = {
+    presentation: 'modal',
+    animation: 'fade_from_bottom',
+    title: 'Settings',
+    headerRight: () => <ThemeToggle />,
+  } as const;
+
+  const INDEX_OPTIONS = {
+    headerLargeTitle: true,
+    title: 'PJ Classes',
+    headerRight: () => <HeaderIcons />,
+  } as const;
+
+  const NOTIFICATION_OPTIONS = {
+    presentation: 'modal',
+    animation: 'fade_from_bottom',
+    title: 'Notifications',
+    headerRight: () => <ThemeToggle />,
+  } as const;
 
   useEffect(() => {
     requestUserPermission();
@@ -48,44 +76,16 @@ export default function RootLayout() {
               <Stack screenOptions={SCREEN_OPTIONS}>
                 <Stack.Screen name="index" options={INDEX_OPTIONS} />
                 <Stack.Screen name="modal" options={MODAL_OPTIONS} />
+                <Stack.Screen name="notifications" options={NOTIFICATION_OPTIONS} />
               </Stack>
+              <Toast />
             </NavThemeProvider>
           </ActionSheetProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
-
     </>
   );
 }
 
-const SCREEN_OPTIONS = {
-  animation: 'ios_from_right', // for android
-} as const;
 
-const INDEX_OPTIONS = {
-  headerLargeTitle: true,
-  title: 'NativeWindUI',
-  headerRight: () => <SettingsIcon />,
-} as const;
 
-function SettingsIcon() {
-  const { colors } = useColorScheme();
-  return (
-    <Link href="/modal" asChild>
-      <Pressable className="opacity-80">
-        {({ pressed }) => (
-          <View className={cn(pressed ? 'opacity-50' : 'opacity-90')}>
-            <Icon name="cog-outline" color={colors.foreground} />
-          </View>
-        )}
-      </Pressable>
-    </Link>
-  );
-}
-
-const MODAL_OPTIONS = {
-  presentation: 'modal',
-  animation: 'fade_from_bottom', // for android
-  title: 'Settings',
-  headerRight: () => <ThemeToggle />,
-} as const;

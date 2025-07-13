@@ -5,7 +5,7 @@ import { Platform, View } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
 
-export default function ModalScreen() {
+export default function NotificationsScreen() {
   const { colors, colorScheme } = useColorScheme();
 
   return (
@@ -14,15 +14,15 @@ export default function ModalScreen() {
         style={Platform.OS === 'ios' ? 'light' : colorScheme === 'dark' ? 'light' : 'dark'}
       />
       <View className="flex-1 items-center justify-center gap-2 px-12">
-        <Icon name="cog-outline" size={42} color={colors.grey} />
+        <Icon name="bell-outline" size={42} color={colors.grey} />
         <Text variant="title3" className="pb-1 text-center font-semibold">
-          Settings
+          Notifications
         </Text>
         <Text color="tertiary" variant="subhead" className="text-center">
-          All your app settings will appear here.
+          All your important updates will appear here.
         </Text>
         <Text color="tertiary" variant="subhead" className="text-center">
-          Customize your experience and manage preferences easily.
+          Enable notifications to stay updated on new quizzes and announcements.
         </Text>
       </View>
     </>

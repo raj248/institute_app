@@ -1,18 +1,36 @@
-import { useEffect, useState } from 'react'
-import { View } from 'react-native'
-import { Text } from '~/components/nativewindui/Text'
-import { getFcmToken } from '~/firebase/notificationService'
+import React from 'react'
+import { View, Image } from 'react-native'
+import { Button } from '~/components/Button' // assuming you have a reusable Button component
+import { useRouter } from 'expo-router'
 import { useColorScheme } from '~/lib/useColorScheme'
+
 const Home = () => {
   const { colors } = useColorScheme()
-  const [token, setToken] = useState('Not Fetched')
-  useEffect(() => {
-    getFcmToken().then(res => setToken(res || 'No Token'))
-  }, [])
+  const router = useRouter()
+
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <Text className='items-center bg-background p-5'>Home</Text>
-      <Text>{token}</Text>
+    <View style={{ flex: 1, backgroundColor: colors.background }} className='items-center justify-center gap-4 px-4'>
+      {/* App Icon */}
+      <Image
+        source={require('~/assets/icon.png')} // replace with your actual icon or placeholder
+        style={{ width: 150, height: 150, marginBottom: 24 }}
+        resizeMode='contain'
+      />
+
+      <Button
+        title='CA Inter'
+        className="w-[80%] mb-4"
+        onPress={() => router.push('/cainter')}
+      />
+
+      <Button
+        title='CA Final'
+        className="w-[80%]"
+        onPress={() => router.push('/cainter')}
+      >
+        CA Final
+      </Button>
+
     </View>
   )
 }

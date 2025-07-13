@@ -13,6 +13,7 @@ import {
   AuthorizationStatus,
   FirebaseMessagingTypes
 } from '@react-native-firebase/messaging';
+import Toast from 'react-native-toast-message';
 
 const app = getApp();
 const messaging = getMessaging(app);
@@ -75,10 +76,13 @@ export function notificationListener() {
   // Foreground notifications
   onMessage(messaging, async remoteMessage => {
     console.log('📩 [Foreground] Notification:', remoteMessage);
-    Alert.alert(
-      remoteMessage.notification?.title ?? '',
-      remoteMessage.notification?.body ?? ''
-    );
+    Toast.show({
+        type: 'info', // or 'success', 'error'
+        text1: remoteMessage.notification?.title ?? 'New Notification',
+        text2: remoteMessage.notification?.body ?? '',
+        position: 'top',
+        visibilityTime: 4000,
+      });
   });
 
   // Background (tap)
