@@ -1,4 +1,4 @@
-{
+export default {
   "expo": {
     "name": "pj-classes-app",
     "slug": "pj-classes-app",
@@ -31,14 +31,26 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pjclasses.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.pjclasses.app",
+      "googleServicesFile": process.env.GOOGLE_SERVICES_FILE,
+      "useNextNotificationsApi": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a15a8433-d87a-403f-88cc-9f50f4290850"
       }
     }
   }

@@ -17,6 +17,8 @@ import { ThemeToggle } from '~/components/ThemeToggle';
 import { cn } from '~/lib/cn';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
+import { useEffect } from 'react';
+import { requestUserPermission, notificationListener } from '~/firebase/notificationService';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -27,14 +29,17 @@ export default function RootLayout() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
 
+  useEffect(() => {
+    requestUserPermission();
+    notificationListener();
+  }, []);
+
   return (
     <>
       <StatusBar
         key={`root-status-bar-${isDarkColorScheme ? 'light' : 'dark'}`}
         style={isDarkColorScheme ? 'light' : 'dark'}
       />
-      {/* WRAP YOUR APP WITH ANY ADDITIONAL PROVIDERS HERE */}
-      {/* <ExampleProvider> */}
 
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
@@ -49,7 +54,6 @@ export default function RootLayout() {
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
 
-      {/* </ExampleProvider> */}
     </>
   );
 }
