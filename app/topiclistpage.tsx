@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fuse from 'fuse.js';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
 
 const mockData = [
@@ -52,7 +52,7 @@ export default function TopicListPage() {
         shadowRadius: 4,
         elevation: 3,
       }}
-      onPress={() => { }}
+      onPress={() => router.push(`/testlistpage?topicId=${item.id}`)}
     >
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
       <Text style={{ fontSize: 14, color: '#555', marginBottom: 8 }}>{item.description}</Text>
