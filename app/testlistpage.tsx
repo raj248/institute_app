@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fuse from 'fuse.js';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
 import { Sheet, useSheetRef } from '~/components/nativewindui/Sheet';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -86,7 +86,8 @@ function TestBottomSheet({ test, setOpenSheet }: { test: any; setOpenSheet: (fn:
         <Text className="mb-4">❓ MCQ Count: {test?.mcqCount}</Text>
 
         <TouchableOpacity
-          onPress={() => {/* start test logic */ }}
+          // onPress={() => {router.push(`/test/${test.id}`); bottomSheetModalRef.current?.close(); }}
+          onPress={() => { router.push(`/mcqtestpage`); bottomSheetModalRef.current?.close(); }}
           className="bg-green-600 rounded-lg p-4 mt-4"
         >
           <Text className="text-center text-white font-medium">Start Test</Text>

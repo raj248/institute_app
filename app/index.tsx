@@ -29,6 +29,18 @@ const Home = () => {
         onPress={() => router.push('/cafinal')}
       />
 
+      <Button
+        title='Debug'
+        className="w-[80%]"
+        onPress={() => router.push('/mcqtestpage')}
+      />
+
+      <Button
+        title='Template'
+        className="w-[80%]"
+        onPress={() => router.push('/index_template')}
+      />
+
     </View>
   )
 }

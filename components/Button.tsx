@@ -1,13 +1,15 @@
 import { forwardRef } from 'react';
 import { StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
 
 type ButtonProps = {
   title?: string;
+  icon?: string;
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
+export const Button = forwardRef<View, ButtonProps>(({ title, icon, ...touchableProps }, ref) => {
   const { colors } = useColorScheme();
   return (
     <TouchableOpacity ref={ref} {...touchableProps} style={[touchableProps.style, {
@@ -26,6 +28,7 @@ export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps 
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
     }]}>
+      {icon && <Icon size={24} color={colors.foreground} source={icon} />}
       <Text>{title}</Text>
     </TouchableOpacity>
   );

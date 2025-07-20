@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
 import { requestUserPermission, notificationListener } from '~/firebase/notificationService';
 import HeaderIcons from '~/components/HeaderIcons';
+import { PaperProvider } from 'react-native-paper';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -71,21 +72,19 @@ export default function RootLayout() {
 
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
-          <ActionSheetProvider>
-            <NavThemeProvider value={NAV_THEME[colorScheme]}>
+          <NavThemeProvider value={NAV_THEME[colorScheme]}>
+            <PaperProvider >
               <Stack screenOptions={SCREEN_OPTIONS}>
                 <Stack.Screen name="index" options={INDEX_OPTIONS} />
                 <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                 <Stack.Screen name="notifications" options={NOTIFICATION_OPTIONS} />
+                <Stack.Screen name="mcqtestpage" options={INDEX_OPTIONS} />
               </Stack>
               <Toast />
-            </NavThemeProvider>
-          </ActionSheetProvider>
+            </PaperProvider>
+          </NavThemeProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </>
   );
 }
-
-
-
