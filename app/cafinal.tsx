@@ -5,7 +5,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useColorScheme } from '~/lib/useColorScheme';
 import HeaderIcons from '~/components/HeaderIcons';
 
-const CAInterScreen = () => {
+const CAFinalScreen = () => {
   const router = useRouter();
   const { colors } = useColorScheme();
 
@@ -13,7 +13,7 @@ const CAInterScreen = () => {
     <>
       <Stack.Screen
         options={{
-          title: 'CA Inter',
+          title: 'CA Final',
           animation: 'slide_from_right',
           headerRight: () => <HeaderIcons />,
         }}
@@ -24,7 +24,7 @@ const CAInterScreen = () => {
             icon={require('~/assets/icons/mcq.png')}
             title="MCQ Test"
             description="Practice Multiple Choice Questions"
-            onPress={() => router.push('/topiclistpage')}
+            onPress={() => router.push('/+not-found')}
           />
           <CardButton
             icon={require('~/assets/icons/notes.png')}
@@ -62,4 +62,4 @@ const CAInterScreen = () => {
   );
 };
 
-export default CAInterScreen;
+export default CAFinalScreen;

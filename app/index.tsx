@@ -26,10 +26,8 @@ const Home = () => {
       <Button
         title='CA Final'
         className="w-[80%]"
-        onPress={() => router.push('/cainter')}
-      >
-        CA Final
-      </Button>
+        onPress={() => router.push('/cafinal')}
+      />
 
     </View>
   )
