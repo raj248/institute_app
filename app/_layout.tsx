@@ -1,90 +1,62 @@
-import '../global.css';
-import 'expo-dev-client';
-import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
-
-import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ThemeToggle } from '~/components/ThemeToggle';
-import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
-import { NAV_THEME } from '~/theme';
-import { useEffect } from 'react';
-import Toast from 'react-native-toast-message';
-import { requestUserPermission, notificationListener } from '~/firebase/notificationService';
-import HeaderIcons from '~/components/HeaderIcons';
-import { PaperProvider } from 'react-native-paper';
-export { ErrorBoundary } from 'expo-router';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useColorScheme } from '~/lib/useColorScheme';
 
 export default function RootLayout() {
-  useInitialAndroidBarSync();
-  const { colorScheme, isDarkColorScheme, colors } = useColorScheme();
-
-  const SCREEN_OPTIONS = {
-    animation: 'ios_from_right',
-    headerStyle: {
-      elevation: 0, // Android shadow
-      shadowOpacity: 0, // iOS shadow
-      backgroundColor: colors.background,
-    },
-    headerTitleAlign: 'center',
-    headerTitleStyle: {
-      fontSize: 18,
-      fontWeight: '600',
-    },
-  } as const;
-
-  const MODAL_OPTIONS = {
-    presentation: 'modal',
-    animation: 'fade_from_bottom',
-    title: 'Settings',
-    headerRight: () => <ThemeToggle />,
-  } as const;
-
-  const INDEX_OPTIONS = {
-    headerLargeTitle: true,
-    title: 'PJ Classes',
-    headerRight: () => <HeaderIcons />,
-  } as const;
-
-  const NOTIFICATION_OPTIONS = {
-    presentation: 'modal',
-    animation: 'fade_from_bottom',
-    title: 'Notifications',
-    headerRight: () => <ThemeToggle />,
-  } as const;
-
-  useEffect(() => {
-    requestUserPermission();
-    notificationListener();
-  }, []);
+  const { colorScheme, colors, isDarkColorScheme } = useColorScheme();
 
   return (
-    <>
-      <StatusBar
-        key={`root-status-bar-${isDarkColorScheme ? 'light' : 'dark'}`}
-        style={isDarkColorScheme ? 'light' : 'dark'}
-        animated={true}
-        backgroundColor={colors.background}
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.grey,
+        tabBarStyle: {
+          backgroundColor: colors.root,
+          borderTopColor: isDarkColorScheme ? '#333' : '#ccc',
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
+      }}
+    >
+      <Tabs.Screen
+        name="(home)"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" color={color} size={size} />
+          ),
+        }}
       />
-
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
-          <NavThemeProvider value={NAV_THEME[colorScheme]}>
-            <PaperProvider >
-              <Stack screenOptions={SCREEN_OPTIONS}>
-                <Stack.Screen name="index" options={INDEX_OPTIONS} />
-                <Stack.Screen name="modal" options={MODAL_OPTIONS} />
-                <Stack.Screen name="notifications" options={NOTIFICATION_OPTIONS} />
-              </Stack>
-              <Toast />
-            </PaperProvider>
-          </NavThemeProvider>
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
-    </>
+      <Tabs.Screen
+        name="search"
+        options={{
+          title: 'Search',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: 'Notifications',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="notifications-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" color={color} size={size} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }

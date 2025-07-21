@@ -3,18 +3,23 @@ import type { APIResponse } from "~/types/api"
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_SERVER_URL;
 
-async function safeFetch<T>(url: string, options?: RequestInit): Promise<{ success: boolean; error?: string; data?: T }> {
+async function safeFetch<T>(
+  url: string,
+  options?: RequestInit
+): Promise<{ success: boolean; error?: string; data?: T }> {
   try {
     const res = await fetch(url, options);
     const result = await res.json();
+
     if (!res.ok || !result.success) {
       console.error(`API error (${url}):`, result.error ?? res.statusText);
       return { success: false, error: result.error ?? res.statusText };
     }
+
     return result;
   } catch (error) {
     console.error(`Fetch error (${url}):`, error);
-    return { success: false, error: (error as Error).message };
+    return { success: false, error: (error as Error).message ?? "Unknown error" };
   }
 }
 

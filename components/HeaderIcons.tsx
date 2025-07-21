@@ -11,20 +11,20 @@ export default function HeaderIcons() {
   return (
     <View className="flex flex-row items-center space-x-3 pr-3 gap-2">
       <ThemeToggleSwitch />
-      <Link href="/notifications" asChild>
+      {/* <Link href="/notifications" asChild>
         <Pressable className="opacity-80">
           {({ pressed }) => (
             <View className={cn(pressed ? 'opacity-50' : 'opacity-90')}>
-              <Icon name="bell-outline" size={22} color={colors.foreground} />
+              <Icon name="bell-outline" size={26} color={colors.foreground} />
             </View>
           )}
         </Pressable>
-      </Link>
+      </Link> */}
       <Link href="/modal" asChild>
         <Pressable className="opacity-80">
           {({ pressed }) => (
             <View className={cn(pressed ? 'opacity-50' : 'opacity-90')}>
-              <Icon name="cog-outline" size={22} color={colors.foreground} />
+              <Icon name="cog-outline" size={26} color={colors.foreground} />
             </View>
           )}
         </Pressable>

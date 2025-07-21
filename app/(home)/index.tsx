@@ -9,7 +9,7 @@ const Home = () => {
   const router = useRouter()
 
   return (
-    <View className='items-center justify-center gap-4 px-4'>
+    <View className='flex-1 items-center justify-center gap-4 px-4'>
       {/* App Icon */}
       <Image
         source={require('~/assets/icon.png')} // replace with your actual icon or placeholder
@@ -33,12 +33,6 @@ const Home = () => {
         title='Debug'
         className="w-[80%]"
         onPress={() => router.push('/debug')}
-      />
-
-      <Button
-        title='Template'
-        className="w-[80%]"
-        onPress={() => router.push('/index_template')}
       />
 
     </View>
