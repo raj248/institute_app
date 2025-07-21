@@ -24,7 +24,7 @@ const CAInterScreen = () => {
             icon={require('~/assets/icons/mcq.png')}
             title="MCQ Test"
             description="Practice Multiple Choice Questions"
-            onPress={() => router.push('/topiclistpage')}
+            onPress={() => router.push({ pathname: '/topiclistpage', params: { course: 'CAInter' } })}
           />
           <CardButton
             icon={require('~/assets/icons/notes.png')}

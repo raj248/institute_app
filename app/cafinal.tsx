@@ -24,7 +24,7 @@ const CAFinalScreen = () => {
             icon={require('~/assets/icons/mcq.png')}
             title="MCQ Test"
             description="Practice Multiple Choice Questions"
-            onPress={() => router.push('/+not-found')}
+            onPress={() => router.push({ pathname: '/topiclistpage', params: { course: 'CAFinal' } })}
           />
           <CardButton
             icon={require('~/assets/icons/notes.png')}

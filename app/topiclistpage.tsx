@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fuse from 'fuse.js';
-import { router, Stack } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
+import { useColorScheme } from '~/lib/useColorScheme';
+import { getTopicsByCourseType } from '~/lib/api';
+import { Topic } from '~/types/entities';
 
 const mockData = [
   {
@@ -11,21 +15,18 @@ const mockData = [
     name: 'Accounting Standards',
     description: 'Learn about the latest accounting standards for CA Inter.',
     testPaperCount: 5,
-    attempted: 2,
   },
   {
     id: 'cmd9uw9pf00022q2rhyi2xrz0',
     name: 'Taxation',
     description: 'Direct and indirect tax fundamentals for CA Inter.',
     testPaperCount: 5,
-    attempted: 1,
   },
   {
     id: 'cmd9uw9pw00042q2rj2lreqfv',
     name: 'Cost Accounting',
     description: 'Concepts and applications in cost accounting for CA Inter.',
     testPaperCount: 5,
-    attempted: 3,
   },
 ];
 
@@ -35,13 +36,33 @@ const fuse = new Fuse(mockData, {
 });
 
 export default function TopicListPage() {
+  const { course } = useLocalSearchParams();
+  console.log(course);
+  if (!course) return <SafeAreaView />;
+  const [topics, setTopics] = useState<Topic[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getTopicsByCourseType(course as string)
+      .then((res) => {
+        const result = res.data
+        setTopics(result ?? null)
+        if (!result) return
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+
   const [query, setQuery] = useState('');
-  const filteredData = query ? fuse.search(query).map(res => res.item) : mockData;
+  const filteredData = query ? fuse.search(query).map(res => res.item) : topics ?? [];
+
+  const { colors, isDarkColorScheme } = useColorScheme();
 
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={{
-        backgroundColor: '#fff',
+        backgroundColor: isDarkColorScheme ? '#222' : '#fff',
         borderRadius: 10,
         padding: 16,
         marginVertical: 8,
@@ -55,13 +76,13 @@ export default function TopicListPage() {
       onPress={() => router.push(`/testlistpage?topicId=${item.id}`)}
     >
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
-      <Text style={{ fontSize: 14, color: '#555', marginBottom: 8 }}>{item.description}</Text>
-      <Text style={{ fontSize: 12, color: '#888', textAlign: 'right' }}>{`${item.attempted}/${item.testPaperCount} Attempted`}</Text>
+      <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>{item.description}</Text>
+      <Text style={{ fontSize: 12, color: isDarkColorScheme ? '#aaa' : '#888', textAlign: 'right' }}>{`Not Implemented/${item.testPaperCount} Attempted`}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
         options={{
           title: 'Topics',
@@ -75,10 +96,12 @@ export default function TopicListPage() {
           value={query}
           onChangeText={setQuery}
           style={{
-            backgroundColor: '#fff',
+            backgroundColor: isDarkColorScheme ? '#222' : '#fff',
+            color: isDarkColorScheme ? '#ccc' : '#222',
             borderRadius: 8,
             padding: 12,
             fontSize: 16,
+            fontWeight: '400',
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.05,
@@ -93,6 +116,6 @@ export default function TopicListPage() {
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: 16 }}
       />
-    </SafeAreaView>
+    </View>
   );
 }

@@ -13,16 +13,15 @@ export interface Course {
 export interface Topic {
   id: string;
   name: string;
-  description?: string | null;
+  description: string;
   courseId: string;
+  courseType: CourseType;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-  course?: Course;
-  testPapers?: TestPaper[];
-  mcqs?: MCQ[];
-  testPaperCount?: number;
-  courseType: CourseType;
+  testPaperCount: number;
+  // testPapers?: TestPaper[];
+  // mcqs?: MCQ[];
 
 }
 
