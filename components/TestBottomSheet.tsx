@@ -16,23 +16,16 @@ export default function TestBottomSheet({ test, setOpenSheet }: { test: TestPape
   return (
     <Sheet ref={bottomSheetModalRef} snapPoints={['40%', '60%']}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-lg font-semibold">{test?.name}</Text>
-          {/* <IconButton
-            name={'close'}
-            color={'white'}
-            onPress={() => bottomSheetModalRef.current?.close()}
-            className="p-2 bg-red-500 rounded-lg"
-          /> */}
-        </View>
-        <Text className="mb-2 text-gray-700">{test?.description}</Text>
-        <Text className="mb-1">⏱ Time Limit: {test?.timeLimitMinutes} minutes</Text>
-        <Text className="mb-1">📄 Total Marks: {test?.totalMarks}</Text>
-        <Text className="mb-4">❓ MCQ Count: {test?.mcqCount}</Text>
+
+        <Text variant={'heading'} className='mb-4 text-center'>{test?.name}</Text>
+        <Text variant={'subhead'} className="mb-2 text-center">{test?.description}</Text>
+        <Text className="mb-1 text-center">⏱ Time Limit: {test?.timeLimitMinutes} minutes</Text>
+        <Text className="mb-1 text-center">📄 Total Marks: {test?.totalMarks}</Text>
+        <Text className="mb-4 text-center">❓ MCQ Count: {test?.mcqCount}</Text>
 
         <TouchableOpacity
           // onPress={() => {router.push(`/test/${test.id}`); bottomSheetModalRef.current?.close(); }}
-          onPress={() => { router.push(`/mcqtestpage`); bottomSheetModalRef.current?.close(); }}
+          onPress={() => { router.push(`/mcqtestpage?testId=${test.id}`); bottomSheetModalRef.current?.close(); }}
           className="bg-green-600 rounded-lg p-4 mt-4"
         >
           <Text className="text-center text-white font-medium">Start Test</Text>

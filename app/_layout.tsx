@@ -17,7 +17,6 @@ import Toast from 'react-native-toast-message';
 import { requestUserPermission, notificationListener } from '~/firebase/notificationService';
 import HeaderIcons from '~/components/HeaderIcons';
 import { PaperProvider } from 'react-native-paper';
-
 export { ErrorBoundary } from 'expo-router';
 
 export default function RootLayout() {
@@ -68,6 +67,8 @@ export default function RootLayout() {
       <StatusBar
         key={`root-status-bar-${isDarkColorScheme ? 'light' : 'dark'}`}
         style={isDarkColorScheme ? 'light' : 'dark'}
+        animated={true}
+        backgroundColor={colors.background}
       />
 
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -78,7 +79,6 @@ export default function RootLayout() {
                 <Stack.Screen name="index" options={INDEX_OPTIONS} />
                 <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                 <Stack.Screen name="notifications" options={NOTIFICATION_OPTIONS} />
-                <Stack.Screen name="mcqtestpage" options={INDEX_OPTIONS} />
               </Stack>
               <Toast />
             </PaperProvider>

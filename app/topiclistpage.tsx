@@ -61,8 +61,13 @@ export default function TopicListPage() {
     </TouchableOpacity>
   );
 
+  useEffect(() => {
+    router.prefetch('/testlistpage');
+  }, []);
+
+
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View>
       <Stack.Screen
         options={{
           title: 'Topics',

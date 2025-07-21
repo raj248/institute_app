@@ -9,7 +9,7 @@ const Home = () => {
   const router = useRouter()
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }} className='items-center justify-center gap-4 px-4'>
+    <View className='items-center justify-center gap-4 px-4'>
       {/* App Icon */}
       <Image
         source={require('~/assets/icon.png')} // replace with your actual icon or placeholder

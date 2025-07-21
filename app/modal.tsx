@@ -12,6 +12,8 @@ export default function ModalScreen() {
     <>
       <StatusBar
         style={Platform.OS === 'ios' ? 'light' : colorScheme === 'dark' ? 'light' : 'dark'}
+        animated={true}
+        backgroundColor={colors.background}
       />
       <View className="flex-1 items-center justify-center gap-2 px-12">
         <Icon name="cog-outline" size={42} color={colors.grey} />
