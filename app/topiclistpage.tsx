@@ -9,31 +9,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { getTopicsByCourseType } from '~/lib/api';
 import { Topic } from '~/types/entities';
 
-const mockData = [
-  {
-    id: 'cmd9uw9pf00032q2rxutxnlw1',
-    name: 'Accounting Standards',
-    description: 'Learn about the latest accounting standards for CA Inter.',
-    testPaperCount: 5,
-  },
-  {
-    id: 'cmd9uw9pf00022q2rhyi2xrz0',
-    name: 'Taxation',
-    description: 'Direct and indirect tax fundamentals for CA Inter.',
-    testPaperCount: 5,
-  },
-  {
-    id: 'cmd9uw9pw00042q2rj2lreqfv',
-    name: 'Cost Accounting',
-    description: 'Concepts and applications in cost accounting for CA Inter.',
-    testPaperCount: 5,
-  },
-];
 
-const fuse = new Fuse(mockData, {
-  keys: ['name', 'description'],
-  threshold: 0.3,
-});
 
 export default function TopicListPage() {
   const { course } = useLocalSearchParams();
@@ -53,6 +29,10 @@ export default function TopicListPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const fuse = new Fuse(topics ?? [], {
+    keys: ['name', 'description'],
+    threshold: 0.6,
+  });
 
   const [query, setQuery] = useState('');
   const filteredData = query ? fuse.search(query).map(res => res.item) : topics ?? [];
