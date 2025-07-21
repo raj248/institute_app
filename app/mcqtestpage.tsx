@@ -3,10 +3,8 @@ import { useState, useEffect } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Appbar, Button, RadioButton, Drawer as PaperDrawer } from 'react-native-paper';
-import { cn } from '~/lib/cn';
+import { Button, RadioButton, Drawer as PaperDrawer } from 'react-native-paper';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { Button as NativeButton } from '~/components/Button';
 import { Stack } from 'expo-router';
 interface Question {
   id: string;

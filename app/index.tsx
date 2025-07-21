@@ -32,7 +32,7 @@ const Home = () => {
       <Button
         title='Debug'
         className="w-[80%]"
-        onPress={() => router.push('/mcqtestpage')}
+        onPress={() => router.push('/debug')}
       />
 
       <Button
