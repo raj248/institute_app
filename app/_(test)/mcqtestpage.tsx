@@ -1,5 +1,5 @@
 import { Drawer } from 'react-native-drawer-layout'
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,13 +22,22 @@ export default function McqTestPage() {
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   const { colors, isDarkColorScheme } = useColorScheme();
+
+  const remainingTimeRef = useRef(60 * 30);
+  const [, forceUpdate] = useState(0);
+
   useEffect(() => {
-    const timer = setInterval(() => setRemainingTime(prev => prev - 1), 1000);
+    const timer = setInterval(() => {
+      remainingTimeRef.current -= 1;
+      if (remainingTimeRef.current % 10 === 0) {
+        forceUpdate(n => n + 1); // update UI every 10s
+      }
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
+
   const { testId } = useLocalSearchParams();
-  const [remainingTime, setRemainingTime] = useState<number>(60 * 30);
   const [test, setTest] = useState<TestPaper | null>(null);
   const [mcqs, setMcqs] = useState<MCQ[]>([]);
 
@@ -74,6 +83,87 @@ export default function McqTestPage() {
     loadPaper();
   }, [testId]);
 
+  const handleSelectOption = (value: string) => {
+    if (!currentQuestion) return;
+    setSelectedOption(value);
+    setAnswers(prev => ({ ...prev, [currentQuestion.id]: value }));
+    console.log(answers);
+
+    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
+  };
+
+  const handleNext = () => {
+    if (!currentQuestion) return;
+    if (currentIndex === mcqs.length - 1) {
+      handleEndTest();
+      return;
+    }
+    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
+    if (currentIndex < mcqs.length - 1)
+      setCurrentIndex(prev => {
+        const nextIndex = prev + 1;
+        setCurrentQuestion(mcqs[nextIndex] || null);
+        return nextIndex;
+      });
+    console.log(answers[mcqs[currentIndex].id]);
+
+    setSelectedOption(answers[mcqs[currentIndex - 1].id] || '');
+
+  };
+  const handlePrevious = () => {
+    if (!currentQuestion) return;
+    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
+    if (currentIndex > 0)
+      setCurrentIndex(prev => {
+        const nextIndex = prev - 1;
+        setCurrentQuestion(mcqs[nextIndex] || null);
+        return nextIndex;
+      });
+
+    console.log(answers[mcqs[currentIndex].id]);
+
+    setSelectedOption(answers[mcqs[currentIndex - 1].id] || '');
+
+  };
+  const handleEndTest = () => {
+    console.log(answers);
+    navigation.goBack();
+  };
+  const formatTime = (sec: number) => `${Math.floor(sec / 60)}:${('0' + (sec % 60)).slice(-2)}`;
+
+  const drawerItems = useMemo(() => mcqs.map((item, index) => {
+    const color = visited.includes(item.id)
+      ? answers[item.id] ? 'green' : 'red'
+      : 'grey';
+
+    return (
+      <PaperDrawer.Item
+        key={item.id}
+        className='mt-2'
+        label={`${index + 1}. ${item.question}`}
+        style={{ backgroundColor: colors.card, borderRadius: 5 }}
+        icon={
+          visited.includes(item.id)
+            ? answers[item.id]
+              ? "check-circle-outline"
+              : "close-circle-outline"
+            : "circle-outline"
+        }
+        theme={isDarkColorScheme ? MD3DarkTheme : undefined}
+        onPress={() => {
+          setDrawerVisible(false);
+          setCurrentIndex(index);
+          setVisited(prev => [...prev, item.id]);
+          setSelectedOption('');
+        }}
+      />
+    )
+  }), [mcqs, visited, answers, colors, isDarkColorScheme]);
+
+  const currentOptions = useMemo(() => {
+    return Object.entries(currentQuestion?.options ?? {});
+  }, [currentQuestion]);
+
   if (loading) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center">
@@ -111,34 +201,7 @@ export default function McqTestPage() {
     );
   }
 
-  const handleSelectOption = (value: string) => {
-    if (!currentQuestion) return;
-    setSelectedOption(value);
-    setAnswers(prev => ({ ...prev, [currentQuestion.id]: value }));
-    console.log(value);
-
-    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
-  };
-
-  const handleNext = () => {
-    if (!currentQuestion) return;
-    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
-    if (currentIndex < mcqs.length - 1) setCurrentIndex(prev => prev + 1);
-    setCurrentQuestion(mcqs[currentIndex] || null);
-  };
-  const handlePrevious = () => {
-    if (!currentQuestion) return;
-    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
-    if (currentIndex > 0) setCurrentIndex(prev => prev - 1);
-    setCurrentQuestion(mcqs[currentIndex] || null);
-  };
-  const handleEndTest = () => {
-    setDialogVisible(false);
-  };
-  const formatTime = (sec: number) => `${Math.floor(sec / 60)}:${('0' + (sec % 60)).slice(-2)}`;
-
   return (
-
     <Drawer
       open={drawerVisible}
       onOpen={() => setDrawerVisible(true)}
@@ -147,50 +210,7 @@ export default function McqTestPage() {
       drawerStyle={{ width: '60%' }}
       renderDrawerContent={() => {
         return (
-          <SafeAreaView style={{ backgroundColor: colors.background }} className='flex-1'>
-            {mcqs.map((item, index) => {
-              let color = visited.includes(item.id)
-                ? answers[item.id]
-                  ? 'green'
-                  : 'red'
-                : 'grey';
-
-              return (
-                <PaperDrawer.Item
-                  key={item.id}
-                  className='mt-2'
-                  label={`${index + 1}. ${item.question}`}
-                  style={{
-                    backgroundColor: colors.card,
-                    borderRadius: 5,
-                  }}
-                  icon={
-                    visited.includes(item.id)
-                      ? answers[item.id]
-                        ? "check-circle-outline" // correct
-                        : "close-circle-outline" // incorrect
-                      : "circle-outline"          // not visited
-                  }
-                  theme={isDarkColorScheme ? MD3DarkTheme : undefined}
-                  onPress={() => {
-                    setDrawerVisible(false);
-                    setCurrentIndex(index);
-                    setVisited(prev => [...prev, item.id]);
-                    setSelectedOption('');
-
-                    // setAnswers();
-                  }}
-                />
-              );
-            })}
-
-            <PaperDrawer.Item
-              icon="exit-to-app"
-              label="End Test"
-              onPress={() => setDialogVisible(false)}
-            />
-          </SafeAreaView>
-
+          <SafeAreaView style={{ backgroundColor: colors.background }} className='flex-1'>{drawerItems}</SafeAreaView>
         )
       }}
     >
@@ -212,7 +232,7 @@ export default function McqTestPage() {
           >
             Info
           </Button>
-          <Text variant="heading">Remaining Time: {formatTime(remainingTime)}</Text>
+          <Text variant="heading">Remaining Time: {formatTime(remainingTimeRef.current)}</Text>
           <Button
             onPress={() => setDrawerVisible(true)}
             icon="menu"
@@ -234,7 +254,7 @@ export default function McqTestPage() {
               // value={answers[currentQuestion?.id || 0]} // allow undefined
               value={selectedOption} // allow undefined
             >
-              {Object.entries(currentQuestion?.options ?? {}).map(([key, value]) => (
+              {currentOptions.map(([key, value]) => (
                 <RadioButton.Item
                   key={key}
                   label={value}
@@ -253,7 +273,7 @@ export default function McqTestPage() {
           <View className="flex-row justify-between items-center mx-1 mb-4">
             <Button onPress={handlePrevious} icon="arrow-left">Previous</Button>
             <Button mode="outlined" onPress={() => handleSelectOption('')}>Clear</Button>
-            <Button onPress={handleNext} icon="arrow-right" contentStyle={{ flexDirection: 'row-reverse' }}>Next</Button>
+            <Button onPress={handleNext} icon="arrow-right" contentStyle={{ flexDirection: 'row-reverse' }}>{currentIndex === mcqs.length - 1 ? 'End Test' : 'Next'}</Button>
           </View>
         </ScrollView>
       </SafeAreaView>
