@@ -39,16 +39,12 @@ export async function getAllTestPapersByTopicId(topicId: string): Promise<APIRes
   return safeFetch(`${BASE_URL}/api/topics/${topicId}/testpapers`);
 }
 
-// ------------------- MCQs --------------------
-
-export async function getMCQById(id: string): Promise<APIResponse<MCQ>> {
-  return safeFetch(`${BASE_URL}/api/mcqs/${id}`);
+export async function getTestPaper(testPaperId: string): Promise<APIResponse<TestPaper>> {
+  return safeFetch(`${BASE_URL}/api/testpapers/${testPaperId}`);
 }
 
-export async function getMCQForTest(testPaperId: string): Promise<APIResponse<{
-  id: string;
-  question: string;
-  options: Record<string, string>;
-}>> {
-  return safeFetch(`${BASE_URL}/api/mcqs/test/${testPaperId}`);
+// ------------------- MCQs --------------------
+
+export async function getMCQForTest(testPaperId: string): Promise<APIResponse<TestPaper>> {
+  return safeFetch(`${BASE_URL}/api/testpapers/test/${testPaperId}`);
 }

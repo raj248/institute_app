@@ -1,59 +1,136 @@
 import { Drawer } from 'react-native-drawer-layout'
-import { useState, useEffect } from 'react';
-import { View, ScrollView } from 'react-native';
+import { useState, useEffect, useLayoutEffect } from 'react';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, RadioButton, Drawer as PaperDrawer } from 'react-native-paper';
+import { Button, RadioButton, Drawer as PaperDrawer, ActivityIndicator } from 'react-native-paper';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { Stack } from 'expo-router';
-interface Question {
-  id: string;
-  question: string;
-  options: { [key: string]: string };
-}
-
-const mockMcqs: Question[] = [
-  { id: '1', question: 'Which accounting standard deals with revenue recognition?', options: { a: 'AS 9', b: 'AS 10', c: 'AS 6', d: 'AS 13' } },
-  { id: '2', question: 'Which of the following is a direct tax?', options: { a: 'GST', b: 'Income Tax', c: 'Customs Duty', d: 'Excise Duty' } },
-  { id: '3', question: 'What is the break-even point?', options: { a: 'Where profit is maximum', b: 'Where total cost equals total revenue', c: 'Where marginal cost equals marginal revenue', d: 'Where sales are zero' } },
-  { id: '4', question: 'Who is responsible for the preparation of audit reports?', options: { a: 'Accountant', b: 'Auditor', c: 'Manager', d: 'Board of Directors' } },
-  { id: '5', question: 'What is capital budgeting?', options: { a: 'Budget for daily expenses', b: 'Long-term investment decision making', c: 'Budget for salaries', d: 'Budget for repairs' } },
-];
-
+import { Stack, useLocalSearchParams, useNavigation } from 'expo-router';
+import { MCQ, TestPaper } from '~/types/entities';
+import { getMCQForTest } from '~/lib/api';
 
 export default function McqTestPage() {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [visited, setVisited] = useState<string[]>([]);
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      tabBarStyle: { display: "none" },
+    });
+  }, [navigation]);
+
+
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
-  const [remainingTime, setRemainingTime] = useState<number>(60 * 30);
-  const { colors } = useColorScheme();
+  const { colors, isDarkColorScheme } = useColorScheme();
   useEffect(() => {
     const timer = setInterval(() => setRemainingTime(prev => prev - 1), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const currentQuestion = mockMcqs[currentIndex];
+  const { testId } = useLocalSearchParams();
+  const [remainingTime, setRemainingTime] = useState<number>(60 * 30);
+  const [test, setTest] = useState<TestPaper | null>(null);
+  const [mcqs, setMcqs] = useState<MCQ[]>([]);
+
+
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentQuestion, setCurrentQuestion] = useState<MCQ | null>(null);
+  const [visited, setVisited] = useState<string[]>([]);
+  const [visitedMcqs, setVisitedMcqs] = useState<string[]>();
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadPaper = async () => {
+    if (!testId) {
+      setError('Test ID not provided.');
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const testRes = await getMCQForTest(testId as string);
+      if (testRes.error) {
+        setError(testRes.error);
+        setLoading(false);
+        return;
+      }
+      setTest(testRes.data ?? null);
+
+      setMcqs(testRes.data?.mcqs ?? []);
+      setCurrentQuestion(testRes.data?.mcqs?.[0] || null);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load test. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPaper();
+  }, [testId]);
+
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text className="mt-2">Loading test...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center px-8">
+        <Text className="text-center mb-4">{error}</Text>
+        <TouchableOpacity
+          onPress={loadPaper}
+          disabled={loading}
+          style={{
+            backgroundColor: "#f1b672ff",
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderRadius: 8,
+          }}
+        >
+          <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>Try Again</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+  if (!test || mcqs.length === 0) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center px-8">
+        <Text className="text-center">No test or MCQs found for this ID.</Text>
+      </SafeAreaView>
+    );
+  }
 
   const handleSelectOption = (value: string) => {
+    if (!currentQuestion) return;
     setAnswers(prev => ({ ...prev, [currentQuestion.id]: value }));
     if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
   };
 
   const handleNext = () => {
+    if (!currentQuestion) return;
     if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
-    if (currentIndex < mockMcqs.length - 1) setCurrentIndex(prev => prev + 1);
+    if (currentIndex < mcqs.length - 1) setCurrentIndex(prev => prev + 1);
+    setCurrentQuestion(mcqs[currentIndex] || null);
   };
-
   const handlePrevious = () => {
+    if (!currentQuestion) return;
     if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
-    if (currentIndex < mockMcqs.length - 1 && currentIndex > 0) setCurrentIndex(prev => prev - 1);
+    if (currentIndex > 0) setCurrentIndex(prev => prev - 1);
+    setCurrentQuestion(mcqs[currentIndex] || null);
   };
   const handleEndTest = () => {
     setDialogVisible(false);
   };
-
   const formatTime = (sec: number) => `${Math.floor(sec / 60)}:${('0' + (sec % 60)).slice(-2)}`;
 
   return (
@@ -67,7 +144,7 @@ export default function McqTestPage() {
       renderDrawerContent={() => {
         return (
           <SafeAreaView style={{ backgroundColor: colors.background }} className='flex-1'>
-            {mockMcqs.map((item, index) => {
+            {mcqs.map((item, index) => {
               let color = visited.includes(item.id)
                 ? answers[item.id]
                   ? 'green'
@@ -111,7 +188,7 @@ export default function McqTestPage() {
         <View className="flex-row justify-between items-center mx-1 mb-4">
           <Button
             onPress={() => {
-              alert(`Visited: ${visited.length}/${mockMcqs.length}\nAttempted: ${Object.keys(answers).length}`);
+              alert(`Visited: ${visited.length}/${mcqs.length}\nAttempted: ${Object.keys(answers).length}`);
             }}
             icon="information"
           >
@@ -131,9 +208,9 @@ export default function McqTestPage() {
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
         >
           <View className="flex flex-col justify-between gap-4">
-            <Text variant="title2">Q{currentIndex + 1}. {currentQuestion.question}</Text>
-            <RadioButton.Group onValueChange={handleSelectOption} value={answers[currentQuestion.id] || ''}>
-              {Object.entries(currentQuestion.options).map(([key, value]) => (
+            <Text variant="title2">Q{currentIndex + 1}. {currentQuestion?.question}</Text>
+            <RadioButton.Group onValueChange={handleSelectOption} value={answers[currentQuestion?.id || 0] || ''}>
+              {Object.entries(currentQuestion?.options ?? {}).map(([key, value]) => (
                 <RadioButton.Item key={key} label={value} value={key} />
               ))}
             </RadioButton.Group>
