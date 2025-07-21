@@ -1,117 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import { Text } from '~/components/nativewindui/Text';
 import Fuse from 'fuse.js';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
-import { Sheet, useSheetRef } from '~/components/nativewindui/Sheet';
-import { ScrollView } from 'react-native-gesture-handler';
-// import { IconButton } from '~/components/IconButton';
-
-const mockTests = [
-  {
-    id: 'cmd9uw9qr000b2q2rumsticfv',
-    name: 'Accounting Standards - Test Paper 5',
-    description: 'Practice test paper 5 for Accounting Standards.',
-    timeLimitMinutes: 80,
-    topicId: 'cmd9uw9pf00032q2rxutxnlw1',
-    totalMarks: 14,
-    mcqCount: 10,
-  },
-  {
-    id: 'cmd9uw9qr00092q2rg6a7u2el',
-    name: 'Accounting Standards - Test Paper 2',
-    description: 'Practice test paper 2 for Accounting Standards.',
-    timeLimitMinutes: 64,
-    topicId: 'cmd9uw9pf00032q2rxutxnlw1',
-    totalMarks: 14,
-    mcqCount: 10,
-  },
-  {
-    id: 'cmd9uw9qr000c2q2rzj58l1kf',
-    name: 'Accounting Standards - Test Paper 1',
-    description: 'Practice test paper 1 for Accounting Standards.',
-    timeLimitMinutes: 74,
-    topicId: 'cmd9uw9pf00032q2rxutxnlw1',
-    totalMarks: 14,
-    mcqCount: 10,
-  },
-  {
-    id: 'cmd9uw9qr000a2q2reworyuzd',
-    name: 'Accounting Standards - Test Paper 4',
-    description: 'Practice test paper 4 for Accounting Standards.',
-    timeLimitMinutes: 68,
-    topicId: 'cmd9uw9pf00032q2rxutxnlw1',
-    totalMarks: 14,
-    mcqCount: 10,
-  },
-  {
-    id: 'cmda68i1600022qlb5a07uh2b',
-    name: 'New Test Paper',
-    description: 'No Description here',
-    timeLimitMinutes: 100,
-    topicId: 'cmd9uw9pf00032q2rxutxnlw1',
-    totalMarks: 29,
-    mcqCount: 2,
-  },
-];
-
-const fuse = new Fuse(mockTests, {
-  keys: ['name', 'description'],
-  threshold: 0.3,
-});
-
-function TestBottomSheet({ test, setOpenSheet }: { test: any; setOpenSheet: (fn: () => void) => void }) {
-  const bottomSheetModalRef = useSheetRef();
-
-  useEffect(() => {
-    if (setOpenSheet) setOpenSheet(() => () => bottomSheetModalRef.current?.present());
-  }, [setOpenSheet]);
-
-  return (
-    <Sheet ref={bottomSheetModalRef} snapPoints={['80%']}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-lg font-semibold">{test?.name}</Text>
-          {/* <IconButton
-            name={'close'}
-            color={'white'}
-            onPress={() => bottomSheetModalRef.current?.close()}
-            className="p-2 bg-red-500 rounded-lg"
-          /> */}
-        </View>
-        <Text className="mb-2 text-gray-700">{test?.description}</Text>
-        <Text className="mb-1">⏱ Time Limit: {test?.timeLimitMinutes} minutes</Text>
-        <Text className="mb-1">📄 Total Marks: {test?.totalMarks}</Text>
-        <Text className="mb-4">❓ MCQ Count: {test?.mcqCount}</Text>
-
-        <TouchableOpacity
-          // onPress={() => {router.push(`/test/${test.id}`); bottomSheetModalRef.current?.close(); }}
-          onPress={() => { router.push(`/mcqtestpage`); bottomSheetModalRef.current?.close(); }}
-          className="bg-green-600 rounded-lg p-4 mt-4"
-        >
-          <Text className="text-center text-white font-medium">Start Test</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </Sheet>
-  );
-}
+import { getAllTestPapersByTopicId, getTopicById } from '~/lib/api';
+import { TestPaper, Topic } from '~/types/entities';
+import { useColorScheme } from '~/lib/useColorScheme';
+import TestBottomSheet from '~/components/TestBottomSheet';
 
 export default function TestListPage() {
-  const [query, setQuery] = useState('');
   const [openSheet, setOpenSheet] = useState(() => () => { });
-  const [selectedTest, setSelectedTest] = useState(null);
   const { topicId } = useLocalSearchParams();
+  const { colors, isDarkColorScheme } = useColorScheme();
 
-  const topicTests = mockTests.filter(test => test.topicId === topicId);
+  const [topic, setTopic] = useState<Topic | null>(null);
+  const [testPapers, setTestPapers] = useState<TestPaper[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadTopic = async () => {
+    if (!topicId) return;
+    try {
+      const topicRes = await getTopicById(topicId as string);
+      setTopic(topicRes.data ?? null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+    }
+  };
+
+  const loadTestPapers = async () => {
+    if (!topicId) return;
+    setLoading(true);
+    try {
+      const res = await getAllTestPapersByTopicId(topicId as string);
+      setTestPapers(res.data ?? null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTopic();
+    loadTestPapers();
+  }, [topicId]);
+
+  const fuse = new Fuse(testPapers ?? [], {
+    keys: ['name', 'description'],
+    threshold: 0.3,
+  });
+
+  const [query, setQuery] = useState('');
+  const [selectedTest, setSelectedTest] = useState<TestPaper | null>(null);
+
+  const topicTests = testPapers?.filter(test => test.topicId === topicId);
+
   const filteredData = query
     ? fuse.search(query).map(res => res.item).filter(test => test.topicId === topicId)
     : topicTests;
 
-  const renderItem = ({ item }: { item: any }) => (
+
+  const renderItem = ({ item }: { item: TestPaper }) => (
     <TouchableOpacity
       style={{
-        backgroundColor: '#fff',
+        backgroundColor: isDarkColorScheme ? '#222' : '#fff',
         borderRadius: 10,
         padding: 16,
         marginVertical: 8,
@@ -127,12 +81,17 @@ export default function TestListPage() {
         openSheet();
       }}
     >
-      <Text style={{ fontSize: 16, fontWeight: '600' }}>{item.name}</Text>
+      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
+      <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>{item.description}</Text>
+      <View className='flex-row justify-between items-center'>
+        <Text style={{ fontSize: 12, color: isDarkColorScheme ? '#aaa' : '#888' }}>{`${item.mcqCount} Questions`}</Text>
+        <Text style={{ fontSize: 12, color: isDarkColorScheme ? '#aaa' : '#888' }}>{`${item.totalMarks} Marks`}</Text>
+      </View>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
         options={{
           title: 'Tests',
@@ -143,13 +102,16 @@ export default function TestListPage() {
       <View style={{ padding: 16 }}>
         <TextInput
           placeholder="Search tests..."
+          placeholderTextColor={isDarkColorScheme ? '#aaa' : '#555'}
           value={query}
           onChangeText={setQuery}
           style={{
-            backgroundColor: '#fff',
+            backgroundColor: isDarkColorScheme ? '#222' : '#fff',
+            color: isDarkColorScheme ? '#fff' : '#222',
             borderRadius: 8,
             padding: 12,
             fontSize: 16,
+            fontWeight: '400',
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.05,
@@ -167,6 +129,6 @@ export default function TestListPage() {
       {selectedTest && (
         <TestBottomSheet test={selectedTest} setOpenSheet={setOpenSheet} />
       )}
-    </SafeAreaView>
+    </View>
   );
 }

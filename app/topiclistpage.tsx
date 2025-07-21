@@ -73,11 +73,12 @@ export default function TopicListPage() {
       <View style={{ padding: 16 }}>
         <TextInput
           placeholder="Search topics..."
+          placeholderTextColor={isDarkColorScheme ? '#aaa' : '#555'}
           value={query}
           onChangeText={setQuery}
           style={{
             backgroundColor: isDarkColorScheme ? '#222' : '#fff',
-            color: isDarkColorScheme ? '#ccc' : '#222',
+            color: isDarkColorScheme ? '#fff' : '#222',
             borderRadius: 8,
             padding: 12,
             fontSize: 16,
