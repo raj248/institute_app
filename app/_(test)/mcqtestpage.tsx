@@ -3,7 +3,7 @@ import { useState, useEffect, useLayoutEffect } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, RadioButton, Drawer as PaperDrawer, ActivityIndicator } from 'react-native-paper';
+import { Button, RadioButton, Drawer as PaperDrawer, ActivityIndicator, MD3DarkTheme } from 'react-native-paper';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import { MCQ, TestPaper } from '~/types/entities';
@@ -36,8 +36,9 @@ export default function McqTestPage() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentQuestion, setCurrentQuestion] = useState<MCQ | null>(null);
   const [visited, setVisited] = useState<string[]>([]);
-  const [visitedMcqs, setVisitedMcqs] = useState<string[]>();
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [selectedOption, setSelectedOption] = useState<string>('');
+
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,7 +113,10 @@ export default function McqTestPage() {
 
   const handleSelectOption = (value: string) => {
     if (!currentQuestion) return;
+    setSelectedOption(value);
     setAnswers(prev => ({ ...prev, [currentQuestion.id]: value }));
+    console.log(value);
+
     if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
   };
 
@@ -154,12 +158,26 @@ export default function McqTestPage() {
               return (
                 <PaperDrawer.Item
                   key={item.id}
+                  className='mt-2'
                   label={`${index + 1}. ${item.question}`}
-                  // labelStyle={{ color }}
+                  style={{
+                    backgroundColor: colors.card,
+                    borderRadius: 5,
+                  }}
+                  icon={
+                    visited.includes(item.id)
+                      ? answers[item.id]
+                        ? "check-circle-outline" // correct
+                        : "close-circle-outline" // incorrect
+                      : "circle-outline"          // not visited
+                  }
+                  theme={isDarkColorScheme ? MD3DarkTheme : undefined}
                   onPress={() => {
                     setDrawerVisible(false);
                     setCurrentIndex(index);
                     setVisited(prev => [...prev, item.id]);
+                    setSelectedOption('');
+
                     // setAnswers();
                   }}
                 />
@@ -169,14 +187,14 @@ export default function McqTestPage() {
             <PaperDrawer.Item
               icon="exit-to-app"
               label="End Test"
-              onPress={() => setDialogVisible(true)}
+              onPress={() => setDialogVisible(false)}
             />
           </SafeAreaView>
 
         )
       }}
     >
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
         <Stack.Screen
           options={{
             title: 'MCQ Test',
@@ -208,13 +226,30 @@ export default function McqTestPage() {
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
         >
           <View className="flex flex-col justify-between gap-4">
-            <Text variant="title2">Q{currentIndex + 1}. {currentQuestion?.question}</Text>
-            <RadioButton.Group onValueChange={handleSelectOption} value={answers[currentQuestion?.id || 0] || ''}>
+            <Text variant="title2">
+              Q{currentIndex + 1}. {currentQuestion?.question}
+            </Text>
+            <RadioButton.Group
+              onValueChange={handleSelectOption}
+              // value={answers[currentQuestion?.id || 0]} // allow undefined
+              value={selectedOption} // allow undefined
+            >
               {Object.entries(currentQuestion?.options ?? {}).map(([key, value]) => (
-                <RadioButton.Item key={key} label={value} value={key} />
+                <RadioButton.Item
+                  key={key}
+                  label={value}
+                  value={key}
+                  style={{
+                    backgroundColor: isDarkColorScheme ? "#222" : "#fff",
+                    marginTop: 5,
+                    borderRadius: 8,
+                  }}
+                  theme={isDarkColorScheme ? MD3DarkTheme : undefined}
+                />
               ))}
             </RadioButton.Group>
           </View>
+
           <View className="flex-row justify-between items-center mx-1 mb-4">
             <Button onPress={handlePrevious} icon="arrow-left">Previous</Button>
             <Button mode="outlined" onPress={() => handleSelectOption('')}>Clear</Button>
