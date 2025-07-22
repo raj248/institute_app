@@ -227,7 +227,7 @@ export default function TestResultPage() {
 
       <Button
         mode="contained"
-        onPress={() => navigation.goBack()}
+        onPress={() => router.replace(`/(home)/testlistpage?topicId=${testData.topicId}`)}
         style={{ marginVertical: 12 }}
       >
         Done
