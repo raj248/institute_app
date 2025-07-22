@@ -25,7 +25,10 @@ export default function TestBottomSheet({ test, setOpenSheet }: { test: TestPape
 
         <TouchableOpacity
           // onPress={() => {router.push(`/test/${test.id}`); bottomSheetModalRef.current?.close(); }}
-          onPress={() => { router.push(`../_(test)/mcqtestpage?testId=${test.id}`); bottomSheetModalRef.current?.close(); }}
+          onPress={() => {
+            bottomSheetModalRef.current?.close();
+            router.push(`../_(test)/mcqtestpage?testId=${test.id}`);
+          }}
           className="bg-green-600 rounded-lg p-4 mt-4"
         >
           <Text className="text-center text-white font-medium">Start Test</Text>

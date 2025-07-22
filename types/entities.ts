@@ -46,3 +46,9 @@ export interface MCQ {
   options: Record<string, string>;
   marks: number;
 }
+
+export type MCQAnswerExplanation = {
+  id: string;
+  answer: "a" | "b" | "c" | "d";
+  explanation: string;
+};

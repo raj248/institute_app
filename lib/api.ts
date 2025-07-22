@@ -1,4 +1,4 @@
-import type { Topic, TestPaper, MCQ } from "~/types/entities";
+import type { Topic, TestPaper, MCQ, MCQAnswerExplanation } from "~/types/entities";
 import type { APIResponse } from "~/types/api"
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_SERVER_URL;
@@ -47,4 +47,10 @@ export async function getTestPaper(testPaperId: string): Promise<APIResponse<Tes
 
 export async function getMCQForTest(testPaperId: string): Promise<APIResponse<TestPaper>> {
   return safeFetch(`${BASE_URL}/api/testpapers/test/${testPaperId}`);
+}
+
+export async function getAnswersForTestPaper(
+  testPaperId: string
+): Promise<APIResponse<MCQAnswerExplanation[]>> {
+  return safeFetch(`${BASE_URL}/api/testpapers/test/${testPaperId}/answers`);
 }
