@@ -1,56 +1,66 @@
-import { Drawer } from 'react-native-drawer-layout'
-import { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { Drawer } from 'react-native-drawer-layout';
+import { useState, useEffect, useLayoutEffect, useMemo } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, RadioButton, Drawer as PaperDrawer, ActivityIndicator, MD3DarkTheme } from 'react-native-paper';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { Stack, useLocalSearchParams, useNavigation } from 'expo-router';
-import { MCQ, TestPaper } from '~/types/entities';
+import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import { getMCQForTest } from '~/lib/api';
+import { useTestStore } from '~/store/test.store';
 
 export default function McqTestPage() {
   const navigation = useNavigation();
+  const { colors, isDarkColorScheme } = useColorScheme();
+  const { testId } = useLocalSearchParams();
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      tabBarStyle: { display: "none" },
-    });
+    navigation.setOptions({ tabBarStyle: { display: 'none' } });
   }, [navigation]);
 
+  const {
+    testData,
+    visited,
+    currentIndex,
+    currentQuestion,
+    answers,
+    remainingTime,
 
-  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
-  const [dialogVisible, setDialogVisible] = useState<boolean>(false);
-  const { colors, isDarkColorScheme } = useColorScheme();
+    addVisited,
+    setCurrentIndex,
+    setCurrentQuestion,
+    setTestData,
+    setRemainingTime,
+    startTimer,
+    stopTimer,
+    setAnswer,
+  } = useTestStore(state => ({
+    testData: state.testData,
+    visited: state.visited,
+    currentIndex: state.currentIndex,
+    currentQuestion: state.currentQuestion,
+    answers: state.answers,
+    remainingTime: state.remainingTime,
 
-  const remainingTimeRef = useRef(60 * 30);
-  const [, forceUpdate] = useState(0);
+    addVisited: state.addVisited,
+    setCurrentIndex: state.setCurrentIndex,
+    setCurrentQuestion: state.setCurrentQuestion,
+    setTestData: state.setTestData,
+    setRemainingTime: state.setRemainingTime,
+    startTimer: state.startTimer,
+    stopTimer: state.stopTimer,
+    setAnswer: state.setAnswer,
+  }));
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      remainingTimeRef.current -= 1;
-      if (remainingTimeRef.current % 10 === 0) {
-        forceUpdate(n => n + 1); // update UI every 10s
-      }
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-
-  const { testId } = useLocalSearchParams();
-  const [test, setTest] = useState<TestPaper | null>(null);
-  const [mcqs, setMcqs] = useState<MCQ[]>([]);
-
-
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [currentQuestion, setCurrentQuestion] = useState<MCQ | null>(null);
-  const [visited, setVisited] = useState<string[]>([]);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [selectedOption, setSelectedOption] = useState<string>('');
-
-
+  const [drawerVisible, setDrawerVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log("Drawer Visible: ", drawerVisible);
+
+  }, [drawerVisible]);
+
 
   const loadPaper = async () => {
     if (!testId) {
@@ -64,13 +74,13 @@ export default function McqTestPage() {
       const testRes = await getMCQForTest(testId as string);
       if (testRes.error) {
         setError(testRes.error);
-        setLoading(false);
-        return;
+      } else if (testRes.data) {
+        setTestData(testRes.data);
+        if (testRes.data.timeLimitMinutes) {
+          setRemainingTime(testRes.data.timeLimitMinutes * 60);
+          startTimer();
+        }
       }
-      setTest(testRes.data ?? null);
-
-      setMcqs(testRes.data?.mcqs ?? []);
-      setCurrentQuestion(testRes.data?.mcqs?.[0] || null);
     } catch (err) {
       console.error(err);
       setError('Failed to load test. Please try again.');
@@ -81,84 +91,89 @@ export default function McqTestPage() {
 
   useEffect(() => {
     loadPaper();
+    return () => stopTimer();
   }, [testId]);
 
   const handleSelectOption = (value: string) => {
     if (!currentQuestion) return;
-    setSelectedOption(value);
-    setAnswers(prev => ({ ...prev, [currentQuestion.id]: value }));
-    console.log(answers);
-
-    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
+    setAnswer(currentQuestion.id, value);
+    addVisited(currentQuestion.id);
   };
 
   const handleNext = () => {
-    if (!currentQuestion) return;
+    if (!testData?.mcqs?.length || !currentQuestion) return;
+    const mcqs = testData.mcqs;
+
     if (currentIndex === mcqs.length - 1) {
       handleEndTest();
       return;
     }
-    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
-    if (currentIndex < mcqs.length - 1)
-      setCurrentIndex(prev => {
-        const nextIndex = prev + 1;
-        setCurrentQuestion(mcqs[nextIndex] || null);
-        return nextIndex;
-      });
-    console.log(answers[mcqs[currentIndex].id]);
 
-    setSelectedOption(answers[mcqs[currentIndex - 1].id] || '');
-
+    addVisited(currentQuestion.id);
+    const nextIndex = currentIndex + 1;
+    setCurrentIndex(nextIndex);
+    setCurrentQuestion(mcqs[nextIndex]);
   };
+
   const handlePrevious = () => {
-    if (!currentQuestion) return;
-    if (!visited.includes(currentQuestion.id)) setVisited(prev => [...prev, currentQuestion.id]);
-    if (currentIndex > 0)
-      setCurrentIndex(prev => {
-        const nextIndex = prev - 1;
-        setCurrentQuestion(mcqs[nextIndex] || null);
-        return nextIndex;
-      });
+    if (!testData?.mcqs?.length || !currentQuestion) return;
+    const mcqs = testData.mcqs;
 
-    console.log(answers[mcqs[currentIndex].id]);
+    addVisited(currentQuestion.id);
 
-    setSelectedOption(answers[mcqs[currentIndex - 1].id] || '');
-
+    if (currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+      setCurrentIndex(prevIndex);
+      setCurrentQuestion(mcqs[prevIndex]);
+    }
   };
+
   const handleEndTest = () => {
-    console.log(answers);
-    navigation.goBack();
+    stopTimer();
+    router.replace("./testresultpage")
   };
+
+  useEffect(() => {
+    if (remainingTime === 0) {
+      // Stop timer
+      useTestStore.getState().stopTimer();
+
+      // Perform any cleanup: save data, calculate score, mark test complete, etc.
+      console.log('Time up, ending test automatically');
+      handleEndTest();
+    }
+  }, [remainingTime]);
+
   const formatTime = (sec: number) => `${Math.floor(sec / 60)}:${('0' + (sec % 60)).slice(-2)}`;
 
-  const drawerItems = useMemo(() => mcqs.map((item, index) => {
-    const color = visited.includes(item.id)
-      ? answers[item.id] ? 'green' : 'red'
-      : 'grey';
+  const [drawerItems, setDrawerItems] = useState<React.ReactNode[]>([]);
 
-    return (
-      <PaperDrawer.Item
-        key={item.id}
-        className='mt-2'
-        label={`${index + 1}. ${item.question}`}
-        style={{ backgroundColor: colors.card, borderRadius: 5 }}
-        icon={
-          visited.includes(item.id)
-            ? answers[item.id]
-              ? "check-circle-outline"
-              : "close-circle-outline"
-            : "circle-outline"
-        }
-        theme={isDarkColorScheme ? MD3DarkTheme : undefined}
-        onPress={() => {
-          setDrawerVisible(false);
-          setCurrentIndex(index);
-          setVisited(prev => [...prev, item.id]);
-          setSelectedOption('');
-        }}
-      />
-    )
-  }), [mcqs, visited, answers, colors, isDarkColorScheme]);
+  const computeDrawerItems = () => {
+    if (!testData?.mcqs) return [];
+    return testData.mcqs.map((item, index) => {
+      const attempted = answers[item.id];
+      const visitedStatus = visited.includes(item.id);
+      const icon = visitedStatus
+        ? attempted ? 'check-circle-outline' : 'close-circle-outline'
+        : 'circle-outline';
+      return (
+        <PaperDrawer.Item
+          key={item.id}
+          className='mt-1'
+          label={`Question ${index + 1}.`}
+          style={{ backgroundColor: colors.card, borderRadius: 5 }}
+          icon={icon}
+          theme={isDarkColorScheme ? MD3DarkTheme : undefined}
+          onPress={() => {
+            setDrawerVisible(false);
+            setCurrentIndex(index);
+            setCurrentQuestion(item);
+            addVisited(item.id);
+          }}
+        />
+      );
+    });
+  };
 
   const currentOptions = useMemo(() => {
     return Object.entries(currentQuestion?.options ?? {});
@@ -193,7 +208,7 @@ export default function McqTestPage() {
     );
   }
 
-  if (!test || mcqs.length === 0) {
+  if (!testData || testData.mcqs?.length === 0) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center px-8">
         <Text className="text-center">No test or MCQs found for this ID.</Text>
@@ -204,55 +219,34 @@ export default function McqTestPage() {
   return (
     <Drawer
       open={drawerVisible}
-      onOpen={() => setDrawerVisible(true)}
+      swipeEnabled={false}
+      onOpen={() => {
+        setDrawerVisible(true);
+        setDrawerItems(computeDrawerItems());
+      }}
       onClose={() => setDrawerVisible(false)}
       drawerPosition="right"
       drawerStyle={{ width: '60%' }}
-      renderDrawerContent={() => {
-        return (
-          <SafeAreaView style={{ backgroundColor: colors.background }} className='flex-1'>{drawerItems}</SafeAreaView>
-        )
-      }}
+      renderDrawerContent={() => (
+        <SafeAreaView style={{ backgroundColor: colors.background }} className='flex-1'>{drawerItems}</SafeAreaView>
+      )}
     >
       <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
-        <Stack.Screen
-          options={{
-            title: 'MCQ Test',
-            animation: 'slide_from_right',
-            headerShown: false,
-          }}
-        />
-
+        <Stack.Screen options={{ title: 'MCQ Test', animation: 'slide_from_right', headerShown: false }} />
         <View className="flex-row justify-between items-center mx-1 mb-4">
-          <Button
-            onPress={() => {
-              alert(`Visited: ${visited.length}/${mcqs.length}\nAttempted: ${Object.keys(answers).length}`);
-            }}
-            icon="information"
-          >
-            Info
-          </Button>
-          <Text variant="heading">Remaining Time: {formatTime(remainingTimeRef.current)}</Text>
-          <Button
-            onPress={() => setDrawerVisible(true)}
-            icon="menu"
-          >
-            Menu
-          </Button>
+          <Button onPress={() => {
+            alert(`Visited: ${visited.length}/${testData?.mcqs?.length}\nAttempted: ${Object.keys(answers).length}`);
+          }} icon="information">Info</Button>
+          <Text variant="heading">Remaining Time: {formatTime(remainingTime ?? 0)}</Text>
+          <Button onPress={() => setDrawerVisible(true)} icon="menu">Menu</Button>
         </View>
 
-        <ScrollView
-          className="flex-1 mx-4"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
-        >
+        <ScrollView className="flex-1 mx-4" contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
           <View className="flex flex-col justify-between gap-4">
-            <Text variant="title2">
-              Q{currentIndex + 1}. {currentQuestion?.question}
-            </Text>
+            <Text variant="title2">Q{currentIndex + 1}. {currentQuestion?.question}</Text>
             <RadioButton.Group
               onValueChange={handleSelectOption}
-              // value={answers[currentQuestion?.id || 0]} // allow undefined
-              value={selectedOption} // allow undefined
+              value={currentQuestion ? answers[currentQuestion.id] ?? '' : ''}
             >
               {currentOptions.map(([key, value]) => (
                 <RadioButton.Item
@@ -273,11 +267,12 @@ export default function McqTestPage() {
           <View className="flex-row justify-between items-center mx-1 mb-4">
             <Button onPress={handlePrevious} icon="arrow-left">Previous</Button>
             <Button mode="outlined" onPress={() => handleSelectOption('')}>Clear</Button>
-            <Button onPress={handleNext} icon="arrow-right" contentStyle={{ flexDirection: 'row-reverse' }}>{currentIndex === mcqs.length - 1 ? 'End Test' : 'Next'}</Button>
+            <Button onPress={handleNext} icon="arrow-right" contentStyle={{ flexDirection: 'row-reverse' }}>
+              {testData.mcqs && currentIndex === testData.mcqs.length - 1 ? 'End Test' : 'Next'}
+            </Button>
           </View>
         </ScrollView>
       </SafeAreaView>
-
     </Drawer>
-  )
+  );
 }
