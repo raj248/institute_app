@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import { View, FlatList, TextInput, TouchableOpacity, RefreshControl } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import Fuse from 'fuse.js';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
@@ -13,6 +13,7 @@ export default function TestListPage() {
   const [openSheet, setOpenSheet] = useState(() => () => { });
   const { topicId } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
+  const [refreshing, setRefreshing] = useState(false);
 
   const [topic, setTopic] = useState<Topic | null>(null);
   const [testPapers, setTestPapers] = useState<TestPaper[] | null>(null);
@@ -123,6 +124,18 @@ export default function TestListPage() {
       <FlatList
         data={filteredData}
         keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              loadTopic();
+              loadTestPapers();
+            }}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: 16 }}
       />

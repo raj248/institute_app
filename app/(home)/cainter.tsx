@@ -83,8 +83,6 @@ const CAInterScreen = () => {
         key={numColumns} // ensures re-render on rotation
         contentContainerStyle={{
           backgroundColor: colors.background,
-          // paddingBottom: insets.bottom + 20,
-          // paddingTop: insets.top + 10,
         }}
         renderItem={({ item }) => (
           <View style={{ flex: 1, margin: 8, height: ITEM_HEIGHT }}>
