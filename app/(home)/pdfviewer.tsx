@@ -12,7 +12,7 @@ export default function PDFViewer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const pdfUrl = (process.env.EXPO_PUBLIC_API_SERVER_URL ?? '') + url;
+  const pdfUrl = (process.env.API_SERVER_URL ?? '') + url;
 
   if (!url) {
     return (

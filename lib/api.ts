@@ -1,7 +1,7 @@
 import type { Topic, TestPaper, MCQ, MCQAnswerExplanation, Note, VideoNote } from "~/types/entities";
 import type { APIResponse } from "~/types/api"
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_SERVER_URL;
+const BASE_URL = process.env.API_SERVER_URL;
 
 async function safeFetch<T>(
   url: string,
