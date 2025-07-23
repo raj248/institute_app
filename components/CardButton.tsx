@@ -22,7 +22,7 @@ export const CardButton: React.FC<CardButtonProps> = ({
     <Pressable
       onPress={onPress}
       className={cn(
-        'rounded-xl p-4 items-center justify-center w-[45%] m-2',
+        'rounded-xl p-4 items-center justify-center flex-1',
         'shadow-md dark:shadow-lg',
         isDarkColorScheme ? 'bg-gray-800' : 'bg-white'
       )}
