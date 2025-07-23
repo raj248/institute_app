@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, FlatList, Dimensions } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, FlatList, useWindowDimensions } from 'react-native';
 import { CardButton } from '~/components/CardButton';
 import { Stack, useRouter } from 'expo-router';
 import { useColorScheme } from '~/lib/useColorScheme';
 import HeaderIcons from '~/components/HeaderIcons';
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const data = [
   {
@@ -55,8 +55,19 @@ const data = [
 const CAInterScreen = () => {
   const router = useRouter();
   const { colors } = useColorScheme();
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
-  const ITEM_HEIGHT = SCREEN_HEIGHT / 3 - 50; // 3 rows, adjust for padding/margin
+  const isLandscape = width > height;
+  const numColumns = isLandscape ? 3 : 2;
+
+  const ITEM_HEIGHT = useMemo(() => {
+    // Total vertical padding/margin: safe areas + top bar + inter-item gaps
+    const verticalPadding = insets.top + insets.bottom + 50; // adjust if header is larger
+    const rows = Math.ceil(data.length / numColumns);
+    return (height - verticalPadding) / rows - 16; // 16 for inter-row margin
+  }, [height, width, insets, numColumns]);
+
   return (
     <>
       <Stack.Screen
@@ -68,9 +79,12 @@ const CAInterScreen = () => {
       />
       <FlatList
         data={data}
-        numColumns={2}
+        numColumns={numColumns}
+        key={numColumns} // ensures re-render on rotation
         contentContainerStyle={{
           backgroundColor: colors.background,
+          // paddingBottom: insets.bottom + 20,
+          // paddingTop: insets.top + 10,
         }}
         renderItem={({ item }) => (
           <View style={{ flex: 1, margin: 8, height: ITEM_HEIGHT }}>
@@ -79,6 +93,7 @@ const CAInterScreen = () => {
               title={item.title}
               description={item.description}
               onPress={() =>
+                // @ts-expect-error: Dynamic router.push path causes type mismatch, safe in this context
                 router.push(item.params ? { pathname: item.path, params: item.params } : item.path)
               }
             />
