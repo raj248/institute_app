@@ -6,6 +6,7 @@ import {
   TextInput,
   ActivityIndicator,
   RefreshControl,
+  Image,
 } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,29 +14,73 @@ import Fuse from 'fuse.js';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { getNotesByTopic } from '~/lib/api';
-import { Note } from '~/types/entities';
+import { getVideoNotesByTopicId } from '~/lib/api';
+import { VideoNote } from '~/types/entities';
 
-export default function NotesPage() {
+export default function VideoListPage() {
   const { topicId } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
 
-  const [notes, setNotes] = useState<Note[] | null>(null);
+  const [videos, setVideos] = useState<VideoNote[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [query, setQuery] = useState('');
 
-  const fetchNotes = async () => {
+  const fetchVideoDetails = async (videoNotes: VideoNote[]) => {
+    if (!videoNotes || videoNotes.length === 0) {
+      setVideos([]);
+      return;
+    }
+
+    try {
+      const updated = await Promise.all(
+        videoNotes.map(async (video) => {
+          if (!video.url.includes("youtube.com") && !video.url.includes("youtu.be")) {
+            return {
+              ...video,
+              title: "Invalid YouTube URL",
+              thumbnail: "https://via.placeholder.com/320x180?text=Invalid+URL",
+            };
+          }
+          try {
+            const response = await fetch(
+              `https://www.youtube.com/oembed?url=${encodeURIComponent(video.url)}&format=json`
+            );
+            if (!response.ok) throw new Error("Failed to fetch video data");
+            const data = await response.json();
+            return {
+              ...video,
+              title: data.title,
+              thumbnail: data.thumbnail_url,
+            };
+          } catch {
+            return {
+              ...video,
+              title: "Failed to fetch title",
+              thumbnail: "https://via.placeholder.com/320x180?text=Error",
+            };
+          }
+        })
+      );
+      setVideos(updated);
+    } catch (e) {
+      console.error(e);
+      setVideos([]);
+    }
+  };
+
+  const fetchVideos = async () => {
     if (!topicId) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await getNotesByTopic(topicId as string);
+      const res = await getVideoNotesByTopicId(topicId as string);
       if (res.error) setError(res.error);
-      setNotes(res.data ?? []);
+      else await fetchVideoDetails(res.data ?? []);
     } catch (err) {
       console.error(err);
-      setError('Failed to load notes. Please check your connection and try again.');
+      setError('Failed to load video notes. Please check your connection and try again.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -43,23 +88,21 @@ export default function NotesPage() {
   };
 
   useEffect(() => {
-    fetchNotes();
+    fetchVideos();
   }, [topicId]);
 
-  const fuse = new Fuse(notes ?? [], {
-    keys: ['name', 'description', 'fileName'],
-    threshold: 0.5,
+  const fuse = new Fuse(videos ?? [], {
+    keys: ['title'],
+    threshold: 0.4,
   });
+  const filteredData = query ? fuse.search(query).map((res) => res.item) : videos ?? [];
 
-  const [query, setQuery] = useState('');
-  const filteredData = query ? fuse.search(query).map((res) => res.item) : notes ?? [];
-
-  const renderItem = ({ item }: { item: Note }) => (
+  const renderItem = ({ item }: { item: VideoNote }) => (
     <TouchableOpacity
       style={{
         backgroundColor: isDarkColorScheme ? '#222' : '#fff',
         borderRadius: 10,
-        padding: 16,
+        padding: 0,
         marginVertical: 8,
         marginHorizontal: 16,
         shadowColor: '#000',
@@ -67,24 +110,29 @@ export default function NotesPage() {
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+        overflow: 'hidden',
       }}
-      onPress={() => router.push({ pathname: './pdfviewer', params: { url: item.fileUrl, name: item.name } })}
+      onPress={() => router.push({ pathname: './videoplayer', params: { url: item.url, title: item.title ?? '' } })}
     >
-      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
-      {item.description && (
-        <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
-          {item.description}
-        </Text>
+      {item.thumbnail && (
+        <Image
+          source={{ uri: item.thumbnail }}
+          style={{ width: '100%', height: 180 }}
+          resizeMode="cover"
+        />
       )}
-      <Text
-        style={{
-          fontSize: 12,
-          color: isDarkColorScheme ? '#aaa' : '#888',
-          textAlign: 'right',
-        }}
-      >
-        {item.fileName} • {(item.fileSize / (1024 * 1024)).toFixed(2)} MB
-      </Text>
+      <View style={{ padding: 12 }}>
+        <Text style={{ fontSize: 16, fontWeight: '600' }}>{item.title ?? 'Untitled Video'}</Text>
+        <Text
+          style={{
+            fontSize: 12,
+            color: isDarkColorScheme ? '#aaa' : '#888',
+            marginTop: 4,
+          }}
+        >
+          Tap to play on embedded player
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 
@@ -100,7 +148,7 @@ export default function NotesPage() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
         options={{
-          title: 'Notes',
+          title: 'Video Notes',
           animation: 'slide_from_right',
           headerRight: () => <HeaderIcons />,
         }}
@@ -108,7 +156,7 @@ export default function NotesPage() {
 
       <View style={{ padding: 16 }}>
         <TextInput
-          placeholder="Search notes..."
+          placeholder="Search videos..."
           placeholderTextColor={isDarkColorScheme ? '#aaa' : '#555'}
           value={query}
           onChangeText={setQuery}
@@ -131,13 +179,13 @@ export default function NotesPage() {
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="mt-2">Loading notes...</Text>
+          <Text className="mt-2">Loading video notes...</Text>
         </View>
       ) : error ? (
         <View className="flex-1 items-center justify-center px-8">
           <Text className="text-center mb-4">{error}</Text>
           <TouchableOpacity
-            onPress={fetchNotes}
+            onPress={fetchVideos}
             style={{
               backgroundColor: '#f1b672ff',
               paddingVertical: 10,
@@ -158,7 +206,7 @@ export default function NotesPage() {
               refreshing={refreshing}
               onRefresh={() => {
                 setRefreshing(true);
-                fetchNotes();
+                fetchVideos();
               }}
               colors={[colors.primary]}
               tintColor={colors.primary}
@@ -167,7 +215,7 @@ export default function NotesPage() {
           contentContainerStyle={{ paddingBottom: 16 }}
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center p-8">
-              <Text className="text-center">No notes found for this topic.</Text>
+              <Text className="text-center">No video notes found for this topic.</Text>
             </View>
           }
         />
