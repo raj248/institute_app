@@ -1,4 +1,4 @@
-import type { Topic, TestPaper, MCQ, MCQAnswerExplanation } from "~/types/entities";
+import type { Topic, TestPaper, MCQ, MCQAnswerExplanation, Note, VideoNote } from "~/types/entities";
 import type { APIResponse } from "~/types/api"
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_SERVER_URL;
@@ -53,4 +53,16 @@ export async function getAnswersForTestPaper(
   testPaperId: string
 ): Promise<APIResponse<MCQAnswerExplanation[]>> {
   return safeFetch(`${BASE_URL}/api/testpapers/test/${testPaperId}/answers`);
+}
+
+// -------------------- Notes --------------------
+
+export async function getNotesByTopic(topicId: string): Promise<APIResponse<Note[]>> {
+  return safeFetch(`${BASE_URL}/api/notes/topic/${topicId}`);
+}
+
+// ------------------ Video ---------------------
+
+export async function getVideoNotesByTopicId(topicId: string): Promise<APIResponse<VideoNote[]>> {
+  return safeFetch(`${BASE_URL}/api/videonotes/topic/${topicId}`);
 }

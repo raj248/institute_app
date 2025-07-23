@@ -1,35 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, TouchableOpacity, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fuse from 'fuse.js';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { getTopicsByCourseType } from '~/lib/api';
-import { Topic } from '~/types/entities';
+import { getNotesByTopic } from '~/lib/api';
+import { Note } from '~/types/entities';
 
-export default function TopicListPage() {
-  const { course, pageType } = useLocalSearchParams();
+export default function NotesPage() {
+  const { topicId } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
 
-  const [topics, setTopics] = useState<Topic[] | null>(null);
+  const [notes, setNotes] = useState<Note[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchTopics = async () => {
-    if (!course) return;
+  const fetchNotes = async () => {
+    if (!topicId) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await getTopicsByCourseType(course as string);
-      const result = res.data;
+      const res = await getNotesByTopic(topicId as string);
       if (res.error) setError(res.error);
-      setTopics(result ?? []);
+      setNotes(res.data ?? []);
     } catch (err) {
       console.error(err);
-      setError('Failed to load topics. Please check your connection and try again.');
+      setError('Failed to load notes. Please check your connection and try again.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -37,18 +43,18 @@ export default function TopicListPage() {
   };
 
   useEffect(() => {
-    fetchTopics();
-  }, [course]);
+    fetchNotes();
+  }, [topicId]);
 
-  const fuse = new Fuse(topics ?? [], {
-    keys: ['name', 'description'],
-    threshold: 0.6,
+  const fuse = new Fuse(notes ?? [], {
+    keys: ['name', 'description', 'fileName'],
+    threshold: 0.5,
   });
 
   const [query, setQuery] = useState('');
-  const filteredData = query ? fuse.search(query).map((res) => res.item) : topics ?? [];
+  const filteredData = query ? fuse.search(query).map((res) => res.item) : notes ?? [];
 
-  const renderItem = ({ item }: { item: Topic }) => (
+  const renderItem = ({ item }: { item: Note }) => (
     <TouchableOpacity
       style={{
         backgroundColor: isDarkColorScheme ? '#222' : '#fff',
@@ -62,22 +68,14 @@ export default function TopicListPage() {
         shadowRadius: 4,
         elevation: 3,
       }}
-      onPress={() => {
-        if (pageType === 'mcq') {
-          router.push({ pathname: './testlistpage', params: { topicId: item.id } });
-        } else if (pageType === 'notes') {
-          router.push({ pathname: './notelistpage', params: { topicId: item.id } });
-        } else if (pageType === 'videos') {
-          router.push({ pathname: './videolistpage', params: { topicId: item.id } });
-        } else {
-          router.push({ pathname: './+not-found' });
-        }
-      }}
+      onPress={() => router.push({ pathname: './+not_found', params: { url: item.fileUrl, name: item.name } })}
     >
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
-      <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
-        {item.description}
-      </Text>
+      {item.description && (
+        <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
+          {item.description}
+        </Text>
+      )}
       <Text
         style={{
           fontSize: 12,
@@ -85,25 +83,32 @@ export default function TopicListPage() {
           textAlign: 'right',
         }}
       >
-        {pageType === 'mcq' ? `${item.testPaperCount} Tests` : pageType === 'notes' ? `${item.noteCount} Notes` : `${item.videoNoteCount} Videos`}
+        {item.fileName} • {(item.fileSize / (1024 * 1024)).toFixed(2)} MB
       </Text>
     </TouchableOpacity>
   );
 
-  if (!course) return <SafeAreaView><Text className="text-center p-4">Course not found.</Text></SafeAreaView>;
+  if (!topicId) {
+    return (
+      <SafeAreaView>
+        <Text className="text-center p-4">Topic ID not found.</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
         options={{
-          title: 'Topics',
+          title: 'Notes',
           animation: 'slide_from_right',
           headerRight: () => <HeaderIcons />,
         }}
       />
+
       <View style={{ padding: 16 }}>
         <TextInput
-          placeholder="Search topics..."
+          placeholder="Search notes..."
           placeholderTextColor={isDarkColorScheme ? '#aaa' : '#555'}
           value={query}
           onChangeText={setQuery}
@@ -126,15 +131,15 @@ export default function TopicListPage() {
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="mt-2">Loading topics...</Text>
+          <Text className="mt-2">Loading notes...</Text>
         </View>
       ) : error ? (
         <View className="flex-1 items-center justify-center px-8">
           <Text className="text-center mb-4">{error}</Text>
           <TouchableOpacity
-            onPress={fetchTopics}
+            onPress={fetchNotes}
             style={{
-              backgroundColor: "#f1b672ff",
+              backgroundColor: '#f1b672ff',
               paddingVertical: 10,
               paddingHorizontal: 20,
               borderRadius: 8,
@@ -153,7 +158,7 @@ export default function TopicListPage() {
               refreshing={refreshing}
               onRefresh={() => {
                 setRefreshing(true);
-                fetchTopics();
+                fetchNotes();
               }}
               colors={[colors.primary]}
               tintColor={colors.primary}
@@ -162,7 +167,7 @@ export default function TopicListPage() {
           contentContainerStyle={{ paddingBottom: 16 }}
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center p-8">
-              <Text className="text-center">No topics found for this course.</Text>
+              <Text className="text-center">No notes found for this topic.</Text>
             </View>
           }
         />

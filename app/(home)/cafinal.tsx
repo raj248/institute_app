@@ -13,14 +13,15 @@ const data = [
     title: 'MCQ Test',
     description: 'Practice Multiple Choice Questions',
     path: '/topiclistpage',
-    params: { course: 'CAFinal' },
+    params: { course: 'CAFinal', pageType: 'mcq' },
   },
   {
     key: 'notes',
     icon: require('~/assets/icons/notes.png'),
     title: 'Notes',
     description: 'Study Notes (includes PDFs)',
-    path: '/+not-found',
+    path: '/topiclistpage',
+    params: { course: 'CAInter', pageType: 'mcq' },
   },
   {
     key: 'rtp',
@@ -34,7 +35,8 @@ const data = [
     icon: require('~/assets/icons/mtp.png'),
     title: 'MTP',
     description: 'Mock Test Papers + Video Notes',
-    path: '/+not-found',
+    path: '/topiclistpage',
+    params: { course: 'CAInter', pageType: 'videos' },
   },
   {
     key: 'revisions',

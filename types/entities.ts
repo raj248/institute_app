@@ -13,16 +13,18 @@ export interface Course {
 export interface Topic {
   id: string;
   name: string;
-  description: string;
+  description?: string | null;
   courseId: string;
-  courseType: CourseType;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-  testPaperCount: number;
-  // testPapers?: TestPaper[];
-  // mcqs?: MCQ[];
-
+  course?: Course;
+  testPapers?: TestPaper[];
+  mcqs?: MCQ[];
+  courseType: CourseType;
+  testPaperCount?: number;
+  noteCount?: number;
+  videoNoteCount?: number;
 }
 
 export interface TestPaper {
@@ -52,3 +54,26 @@ export type MCQAnswerExplanation = {
   answer: "a" | "b" | "c" | "d";
   explanation: string;
 };
+
+export interface Note {
+  id: string;
+  name: string;
+  description?: string;
+  topicId: string;
+  courseType: "CAInter" | "CAFinal";
+  fileName: string;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  createdAt: string;
+  deletedAt: string | null;
+}
+
+export interface VideoNote {
+  id: string;         // UUID from your DB
+  url: string;        // YouTube URL
+  topicId: string;
+  courseType: string;
+  title?: string;     // optional to you fetch on frontend
+  thumbnail?: string; // optional to you fetch on frontend
+}
