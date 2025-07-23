@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, View, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, View, TouchableOpacity, Dimensions } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { WebView } from 'react-native-webview';
+import Pdf from 'react-native-pdf';
 
 export default function PDFViewer() {
   const { url, name } = useLocalSearchParams<{ url?: string; name?: string }>();
@@ -12,9 +12,9 @@ export default function PDFViewer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const pdfUrl = url;
+  const pdfUrl = (process.env.EXPO_PUBLIC_API_SERVER_URL ?? '') + url;
 
-  if (!pdfUrl) {
+  if (!url) {
     return (
       <View className="flex-1 items-center justify-center p-8">
         <Text className="text-center">No PDF URL provided.</Text>
@@ -43,7 +43,10 @@ export default function PDFViewer() {
         <View className="flex-1 items-center justify-center p-8">
           <Text className="text-center mb-4">{error}</Text>
           <TouchableOpacity
-            onPress={() => setError(null)}
+            onPress={() => {
+              setError(null);
+              setLoading(true);
+            }}
             style={{
               backgroundColor: '#f1b672ff',
               paddingVertical: 10,
@@ -57,17 +60,23 @@ export default function PDFViewer() {
           </TouchableOpacity>
         </View>
       ) : (
-        <WebView
-          source={{ uri: `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(pdfUrl)}` }}
-          style={{ flex: 1 }}
-          onLoadStart={() => setLoading(true)}
-          onLoadEnd={() => setLoading(false)}
-          onError={(syntheticEvent) => {
-            console.error(syntheticEvent.nativeEvent);
+        <Pdf
+          source={{ uri: pdfUrl, cache: true }}
+          style={{ flex: 1, width: Dimensions.get('window').width }}
+          trustAllCerts={false}
+          onLoadComplete={(numberOfPages, filePath) => {
+            setLoading(false);
+            console.log(`Loaded PDF with ${numberOfPages} pages from ${filePath}`);
+          }}
+          onError={(err) => {
+            console.error(err);
+            setLoading(false);
             setError('Failed to load PDF.');
           }}
-          scalesPageToFit
-          bounces={false}
+          onLoadProgress={(percent) => {
+            if (percent < 1) setLoading(true);
+          }}
+          enableAnnotationRendering={false}
         />
       )}
     </View>
