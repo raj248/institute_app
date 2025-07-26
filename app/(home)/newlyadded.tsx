@@ -1,58 +1,90 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, FlatList, StyleSheet } from "react-native";
-import { getNewlyAddedItems } from "~/lib/api"; // adjust path if needed
-import type { NewlyAdded } from "~/types/entities";
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { getNewlyAddedItems, getNoteById, getVideoNoteById, getTestPaperById } from '~/lib/api'
+import { useColorScheme } from '~/lib/useColorScheme'
+import { Note, VideoNote, TestPaper, NewlyAdded } from '~/types/entities'
+import NoteCard from '~/components/cards/NoteCard'
+import VideoCard from '~/components/cards/VideoCard'
+import TestPaperCard from '~/components/cards/TestPaperCard'
+import TestBottomSheet from '~/components/TestBottomSheet'
+import { Stack } from 'expo-router'
 
 const NewlyAddedScreen = () => {
-  const [data, setData] = useState<NewlyAdded[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { isDarkColorScheme } = useColorScheme()
+  const [loading, setLoading] = useState(true)
+  const [items, setItems] = useState<(Note | VideoNote | TestPaper)[]>([])
+  const [openSheet, setOpenSheet] = useState(() => () => { });
+  const [selectedTest, setSelectedTest] = useState<TestPaper | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await getNewlyAddedItems();
-      if (result.success && result.data) {
-        setData(result.data);
-      } else {
-        setError(result.error ?? "Unknown error");
+    const load = async () => {
+      try {
+        const response = await getNewlyAddedItems()
+        const all = response.data ?? []
+
+        const filtered = all.filter(entry =>
+          ['Note', 'VideoNote', 'TestPaper'].includes(entry.tableName)
+        )
+
+        const fetchPromises = filtered.map(async (entry) => {
+          if (entry.tableName === 'Note') {
+            const res = await getNoteById(entry.entityId)
+            return res.data
+          } else if (entry.tableName === 'VideoNote') {
+            const res = await getVideoNoteById(entry.entityId)
+            return res.data
+          } else if (entry.tableName === 'TestPaper') {
+            const res = await getTestPaperById(entry.entityId)
+            return res.data
+          }
+        })
+
+        const results = await Promise.all(fetchPromises)
+        const nonNullItems = results.filter(Boolean) as (Note | VideoNote | TestPaper)[]
+        setItems(nonNullItems)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false);
-    };
+    }
 
-    fetchData();
-  }, []);
+    load()
+  }, [])
 
-  if (loading) return <ActivityIndicator size="large" style={styles.center} />;
-  if (error) return <Text style={styles.center}>Error: {error}</Text>;
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color={isDarkColorScheme ? '#fff' : '#000'} />
+        <Text className="mt-2 text-base">Loading newly added...</Text>
+      </View>
+    )
+  }
 
   return (
-    <FlatList
-      data={data}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={styles.container}
-      renderItem={({ item }) => (
-        <View style={styles.card}>
-          <Text style={styles.table}>{item.tableName.toUpperCase()}</Text>
-          <Text style={styles.id}>Entity ID: {item.entityId}</Text>
-          <Text style={styles.date}>{new Date(item.addedAt).toLocaleString()}</Text>
-        </View>
+    <>
+      <Stack.Screen options={{
+        title: 'Newly Added',
+        animation: 'slide_from_right',
+      }} />
+
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        {items.map((item, idx) => {
+          if ('fileUrl' in item) {
+            return <NoteCard key={idx} item={item} />
+          } else if ('url' in item) {
+            return <VideoCard key={idx} item={item} />
+          } else {
+            return <TestPaperCard key={idx} item={item} setSelectedTest={setSelectedTest} openSheet={openSheet} />
+          }
+        })}
+      </ScrollView>
+      {selectedTest && (
+        <TestBottomSheet test={selectedTest} setOpenSheet={setOpenSheet} />
       )}
-    />
-  );
-};
 
-const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: "center", alignItems: "center", padding: 16 },
-  container: { padding: 16 },
-  card: {
-    marginBottom: 12,
-    padding: 16,
-    borderRadius: 10,
-    backgroundColor: "#f0f0f0",
-  },
-  table: { fontWeight: "bold", fontSize: 16 },
-  id: { fontSize: 14, color: "#555" },
-  date: { fontSize: 12, color: "#999" },
-});
+    </>
+  )
+}
 
-export default NewlyAddedScreen;
+export default NewlyAddedScreen

@@ -40,7 +40,7 @@ export async function getAllTestPapersByTopicId(topicId: string): Promise<APIRes
   return safeFetch(`${BASE_URL}/api/topics/${topicId}/testpapers`);
 }
 
-export async function getTestPaper(testPaperId: string): Promise<APIResponse<TestPaper>> {
+export async function getTestPaperById(testPaperId: string): Promise<APIResponse<TestPaper>> {
   return safeFetch(`${BASE_URL}/api/testpapers/${testPaperId}`);
 }
 
@@ -62,6 +62,13 @@ export async function getNotesByTopic(topicId: string, type: string = "all"): Pr
   return safeFetch(`${BASE_URL}/api/notes/topic/${topicId}?type=${encodeURIComponent(type)}`);
 }
 
+/**
+ * Get a note by its ID
+ */
+export async function getNoteById(noteId: string): Promise<APIResponse<Note>> {
+  return safeFetch(`${BASE_URL}/api/notes/${noteId}`);
+}
+
 // ------------------ Video ---------------------
 
 export async function getVideoNotesByTopicId(
@@ -70,6 +77,13 @@ export async function getVideoNotesByTopicId(
 ): Promise<APIResponse<VideoNote[]>> {
   const url = `${BASE_URL}/api/videonotes/topic/${topicId}?type=${encodeURIComponent(type)}`;
   return safeFetch(url);
+}
+
+/**
+ * Get a video by its ID
+ */
+export async function getVideoNoteById(videoNoteId: string): Promise<APIResponse<Note>> {
+  return safeFetch(`${BASE_URL}/api/videonotes/${videoNoteId}`);
 }
 
 // ------------------- Newly Added --------------------
