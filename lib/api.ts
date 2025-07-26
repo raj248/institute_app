@@ -1,4 +1,4 @@
-import type { Topic, TestPaper, MCQAnswerExplanation, Note, VideoNote, NewlyAdded } from "~/types/entities";
+import type { Topic, TestPaper, MCQAnswerExplanation, Note, VideoNote, NewlyAdded, SearchResult } from "~/types/entities";
 import type { APIResponse } from "~/types/api"
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_SERVER_URL;
@@ -93,4 +93,9 @@ export async function getVideoNoteById(videoNoteId: string): Promise<APIResponse
  */
 export async function getNewlyAddedItems(): Promise<APIResponse<NewlyAdded[]>> {
   return safeFetch(`${BASE_URL}/api/newlyadded`);
+}
+
+export async function searchAll(query: string): Promise<APIResponse<SearchResult>> {
+  const url = `${BASE_URL}/api/search?query=${encodeURIComponent(query)}`;
+  return safeFetch<SearchResult>(url);
 }

@@ -78,6 +78,8 @@ export interface Note {
 export interface VideoNote {
   id: string;
   url: string;
+  name: string;
+  description?: string;
   type: "rtp" | "mtp" | "revision" | "other"; // added as per schema
   topicId: string;
   courseType: "CAInter" | "CAFinal";
@@ -94,3 +96,11 @@ export interface NewlyAdded {
   entityId: string;
   addedAt: string;
 }
+
+
+export interface SearchResult {
+  topics: Topic[];
+  testPapers: TestPaper[];
+  notes: Note[];
+  videoNotes: VideoNote[];
+};
