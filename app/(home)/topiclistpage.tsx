@@ -67,8 +67,12 @@ export default function TopicListPage() {
           router.push({ pathname: './testlistpage', params: { topicId: item.id } });
         } else if (pageType === 'notes') {
           router.push({ pathname: './notelistpage', params: { topicId: item.id } });
-        } else if (pageType === 'videos') {
-          router.push({ pathname: './videolistpage', params: { topicId: item.id } });
+        } else if (pageType === 'mtp') {
+          router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'mtp' } });
+        } else if (pageType === 'rtp') {
+          router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'rtp' } });
+        } else if (pageType === 'revision') {
+          router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'revision' } });
         } else {
           router.push({ pathname: './+not-found' });
         }

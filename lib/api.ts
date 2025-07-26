@@ -64,6 +64,11 @@ export async function getNotesByTopic(topicId: string): Promise<APIResponse<Note
 
 // ------------------ Video ---------------------
 
-export async function getVideoNotesByTopicId(topicId: string): Promise<APIResponse<VideoNote[]>> {
-  return safeFetch(`${BASE_URL}/api/videonotes/topic/${topicId}`);
+export async function getVideoNotesByTopicId(
+  topicId: string,
+  type: string = "all"
+): Promise<APIResponse<VideoNote[]>> {
+  const url = `${BASE_URL}/api/videonotes/topic/${topicId}?type=${encodeURIComponent(type)}`;
+  return safeFetch(url);
 }
+

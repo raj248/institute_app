@@ -18,7 +18,7 @@ import { getVideoNotesByTopicId } from '~/lib/api';
 import { VideoNote } from '~/types/entities';
 
 export default function VideoListPage() {
-  const { topicId } = useLocalSearchParams();
+  const { topicId, type } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
 
   const [videos, setVideos] = useState<VideoNote[]>([]);
@@ -75,7 +75,7 @@ export default function VideoListPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await getVideoNotesByTopicId(topicId as string);
+      const res = await getVideoNotesByTopicId(topicId as string, type as string);
       if (res.error) setError(res.error);
       else await fetchVideoDetails(res.data ?? []);
     } catch (err) {

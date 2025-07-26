@@ -28,7 +28,8 @@ const data = [
     icon: require('~/assets/icons/rtp.png'),
     title: 'RTP',
     description: 'Revision Test Papers',
-    path: '/+not-found',
+    path: '/topiclistpage',
+    params: { course: 'CAInter', pageType: 'rtp' },
   },
   {
     key: 'mtp',
@@ -36,14 +37,15 @@ const data = [
     title: 'MTP',
     description: 'Mock Test Papers + Video Notes',
     path: '/topiclistpage',
-    params: { course: 'CAInter', pageType: 'videos' },
+    params: { course: 'CAInter', pageType: 'mtp' },
   },
   {
-    key: 'revisions',
+    key: 'revision',
     icon: require('~/assets/icons/revisions.png'),
     title: 'Revisions',
     description: 'Marked Revision Content',
-    path: '/+not-found',
+    path: '/topiclistpage',
+    params: { course: 'CAInter', pageType: 'revision' },
   },
   {
     key: 'new',
