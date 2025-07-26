@@ -17,6 +17,7 @@ expo-env.d.ts
 
 ios
 android
+SERVICE_KEY
 
 # macOS
 .DS_Store
