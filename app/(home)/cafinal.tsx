@@ -20,8 +20,8 @@ const data = [
     icon: require('~/assets/icons/notes.png'),
     title: 'Notes',
     description: 'Study Notes (includes PDFs)',
-    path: '/topiclistpage',
-    params: { course: 'CAInter', pageType: 'mcq' },
+    path: '/notes',
+    params: { course: 'CAFinal' },
   },
   {
     key: 'rtp',
@@ -29,7 +29,7 @@ const data = [
     title: 'RTP',
     description: 'Revision Test Papers',
     path: '/topiclistpage',
-    params: { course: 'CAInter', pageType: 'rtp' },
+    params: { course: 'CAFinal', pageType: 'rtp' },
   },
   {
     key: 'mtp',
@@ -37,7 +37,7 @@ const data = [
     title: 'MTP',
     description: 'Mock Test Papers + Video Notes',
     path: '/topiclistpage',
-    params: { course: 'CAInter', pageType: 'mtp' },
+    params: { course: 'CAFinal', pageType: 'mtp' },
   },
   {
     key: 'revision',
@@ -45,7 +45,7 @@ const data = [
     title: 'Revisions',
     description: 'Marked Revision Content',
     path: '/topiclistpage',
-    params: { course: 'CAInter', pageType: 'revision' },
+    params: { course: 'CAFinal', pageType: 'revision' },
   },
   {
     key: 'new',

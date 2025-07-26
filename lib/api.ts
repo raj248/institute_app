@@ -58,8 +58,8 @@ export async function getAnswersForTestPaper(
 
 // -------------------- Notes --------------------
 
-export async function getNotesByTopic(topicId: string): Promise<APIResponse<Note[]>> {
-  return safeFetch(`${BASE_URL}/api/notes/topic/${topicId}`);
+export async function getNotesByTopic(topicId: string, type: string = "all"): Promise<APIResponse<Note[]>> {
+  return safeFetch(`${BASE_URL}/api/notes/topic/${topicId}?type=${encodeURIComponent(type)}`);
 }
 
 // ------------------ Video ---------------------

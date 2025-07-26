@@ -20,8 +20,8 @@ const data = [
     icon: require('~/assets/icons/notes.png'),
     title: 'Notes',
     description: 'Study Notes (includes PDFs)',
-    path: '/topiclistpage',
-    params: { course: 'CAInter', pageType: 'notes' },
+    path: '/notes',
+    params: { course: 'CAInter' },
   },
   {
     key: 'rtp',

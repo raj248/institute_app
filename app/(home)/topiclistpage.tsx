@@ -65,8 +65,12 @@ export default function TopicListPage() {
       onPress={() => {
         if (pageType === 'mcq') {
           router.push({ pathname: './testlistpage', params: { topicId: item.id } });
-        } else if (pageType === 'notes') {
-          router.push({ pathname: './notelistpage', params: { topicId: item.id } });
+        } else if (pageType === 'notes_mtp') {
+          router.push({ pathname: './notelistpage', params: { topicId: item.id, type: 'mtp' } });
+        } else if (pageType === 'notes_rtp') {
+          router.push({ pathname: './notelistpage', params: { topicId: item.id, type: 'rtp' } });
+        } else if (pageType === 'notes_other') {
+          router.push({ pathname: './notelistpage', params: { topicId: item.id, type: 'other' } });
         } else if (pageType === 'mtp') {
           router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'mtp' } });
         } else if (pageType === 'rtp') {
@@ -91,10 +95,11 @@ export default function TopicListPage() {
       >
         {pageType === 'mcq'
           ? `${item.testPaperCount} Tests`
-          : pageType === 'notes'
-            ? `${item.noteCount} Notes`
+          : (pageType as string)?.startsWith('notes_')
+            ? `${item.noteCountByType?.[(pageType as string).replace('notes_', '')] ?? 0} Notes`
             : `${item.videoNoteCountByType?.[pageType as string] ?? 0} Videos`}
       </Text>
+
 
     </TouchableOpacity>
   );

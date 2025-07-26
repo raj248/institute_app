@@ -17,7 +17,7 @@ import { getNotesByTopic } from '~/lib/api';
 import { Note } from '~/types/entities';
 
 export default function NotesPage() {
-  const { topicId } = useLocalSearchParams();
+  const { topicId, type } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
 
   const [notes, setNotes] = useState<Note[] | null>(null);
@@ -30,7 +30,7 @@ export default function NotesPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await getNotesByTopic(topicId as string);
+      const res = await getNotesByTopic(topicId as string, type as string);
       if (res.error) setError(res.error);
       setNotes(res.data ?? []);
     } catch (err) {
