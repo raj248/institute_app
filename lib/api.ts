@@ -7,6 +7,7 @@ async function safeFetch<T>(
   url: string,
   options?: RequestInit
 ): Promise<{ success: boolean; error?: string; data?: T }> {
+  console.log(`Fetching ${url}`);
   try {
     const res = await fetch(url, options);
     const result = await res.json();

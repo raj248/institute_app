@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef } from 'react';
+import { View, ActivityIndicator, BackHandler } from 'react-native';
+import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { Text } from '~/components/nativewindui/Text';
 import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { WebView } from 'react-native-webview';
-import type { WebView as WebViewType, WebViewMessageEvent } from 'react-native-webview';
+import type { WebView as WebViewType } from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
@@ -13,7 +13,7 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 
 export default function VideoPlayer() {
   const { url, title } = useLocalSearchParams<{ url?: string; title?: string }>();
-  const { colors, isDarkColorScheme } = useColorScheme();
+  const { colors } = useColorScheme();
   const webViewRef = useRef<WebViewType>(null);
 
 
@@ -29,21 +29,24 @@ export default function VideoPlayer() {
     return null;
   };
 
+  const navigation = useNavigation();
   useEffect(() => {
-    // Hide status bar
+    const subscribe = navigation.addListener('focus', () => {
+      NavigationBar.setVisibilityAsync('hidden');
+      NavigationBar.setBehaviorAsync('overlay-swipe');
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    })
+    return subscribe;
+  }, []);
 
-    // Hide navigation bar (Android only)
-    NavigationBar.setVisibilityAsync('hidden');
-    NavigationBar.setBehaviorAsync('inset-swipe');
-
-    // Lock orientation to landscape for better video
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-
-    return () => {
-      // Reset when leaving screen
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', (e) => {
       NavigationBar.setVisibilityAsync('visible');
       ScreenOrientation.unlockAsync();
-    };
+      console.log("Resetting orientation and status bar")
+    });
+
+    return unsubscribe;
   }, []);
 
   const videoId = getEmbeddedUrl(url);
@@ -99,11 +102,13 @@ export default function VideoPlayer() {
         player.on("statechange", (e) => {
           window.ReactNativeWebView.postMessage(JSON.stringify({ type: "STATE_CHANGE", state: e }));
         });
+        window.addEventListener('unload', () => {
+          player.destroy();
+        });
       </script>
     </body>
   </html>
 `;
-
   return (
     <>
       <StatusBar
