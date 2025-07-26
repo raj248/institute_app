@@ -87,3 +87,10 @@ export interface VideoNote {
   updatedAt: string;
   deletedAt: string | null;
 }
+
+export interface NewlyAdded {
+  id: string;
+  tableName: "MCQ" | "TestPaper" | "Note" | "VideoNote";
+  entityId: string;
+  addedAt: string;
+}

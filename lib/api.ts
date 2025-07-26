@@ -1,4 +1,4 @@
-import type { Topic, TestPaper, MCQAnswerExplanation, Note, VideoNote } from "~/types/entities";
+import type { Topic, TestPaper, MCQAnswerExplanation, Note, VideoNote, NewlyAdded } from "~/types/entities";
 import type { APIResponse } from "~/types/api"
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_SERVER_URL;
@@ -72,3 +72,11 @@ export async function getVideoNotesByTopicId(
   return safeFetch(url);
 }
 
+// ------------------- Newly Added --------------------
+
+/**
+ * Get all newly added items
+ */
+export async function getNewlyAddedItems(): Promise<APIResponse<NewlyAdded[]>> {
+  return safeFetch(`${BASE_URL}/api/newlyadded`);
+}

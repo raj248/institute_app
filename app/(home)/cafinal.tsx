@@ -52,7 +52,7 @@ const data = [
     icon: require('~/assets/icons/new.png'),
     title: 'Newly Added',
     description: 'Latest Updates',
-    path: '/+not-found',
+    path: '/newlyadded',
   },
 ];
 
