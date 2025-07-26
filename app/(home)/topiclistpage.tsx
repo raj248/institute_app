@@ -89,8 +89,13 @@ export default function TopicListPage() {
           textAlign: 'right',
         }}
       >
-        {pageType === 'mcq' ? `${item.testPaperCount} Tests` : pageType === 'notes' ? `${item.noteCount} Notes` : `${item.videoNoteCount} Videos`}
+        {pageType === 'mcq'
+          ? `${item.testPaperCount} Tests`
+          : pageType === 'notes'
+            ? `${item.noteCount} Notes`
+            : `${item.videoNoteCountByType?.[pageType as string] ?? 0} Videos`}
       </Text>
+
     </TouchableOpacity>
   );
 

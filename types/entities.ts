@@ -25,7 +25,12 @@ export interface Topic {
   testPaperCount?: number;
   noteCount?: number;
   videoNoteCount?: number;
+
+  // ✅ Newly added:
+  noteCountByType?: Record<string, number>;
+  videoNoteCountByType?: Record<string, number>;
 }
+
 
 export interface TestPaper {
   id: string;
@@ -59,6 +64,7 @@ export interface Note {
   id: string;
   name: string;
   description?: string;
+  type: "rtp" | "mtp" | "other";  // added as per schema
   topicId: string;
   courseType: "CAInter" | "CAFinal";
   fileName: string;
@@ -70,10 +76,14 @@ export interface Note {
 }
 
 export interface VideoNote {
-  id: string;         // UUID from your DB
-  url: string;        // YouTube URL
+  id: string;
+  url: string;
+  type: "rtp" | "mtp" | "revision" | "other"; // added as per schema
   topicId: string;
-  courseType: string;
-  title?: string;     // optional to you fetch on frontend
-  thumbnail?: string; // optional to you fetch on frontend
+  courseType: "CAInter" | "CAFinal";
+  title?: string;
+  thumbnail?: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
 }
