@@ -41,6 +41,7 @@ export default function VideoPlayer() {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', (e) => {
+      NavigationBar.setBehaviorAsync('inset-touch');
       NavigationBar.setVisibilityAsync('visible');
       ScreenOrientation.unlockAsync();
       console.log("Resetting orientation and status bar")
@@ -116,7 +117,7 @@ export default function VideoPlayer() {
         style={'light'}
         animated={true}
         backgroundColor={"black"}
-        hidden={true}
+      // hidden={true}
       />
       <Stack.Screen
         options={{
