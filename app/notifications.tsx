@@ -1,6 +1,7 @@
 import { Icon } from '@roninoss/icons';
+import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { FlatList, Platform, View } from 'react-native';
+import { Alert, FlatList, Platform, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { useNotificationStore } from '~/store/notification.store';
@@ -17,7 +18,7 @@ export default function NotificationsScreen() {
         animated={true}
         backgroundColor={colors.background}
       />
-      <View className="flex-1 p-4">
+      <SafeAreaView className="flex-1 p-4" style={{ backgroundColor: colors.background }}>
         {notifications.length === 0 ? (
           <View className="flex-1 items-center justify-center gap-2 px-12">
             <Icon name="bell-outline" size={42} color={colors.grey} />
@@ -36,7 +37,22 @@ export default function NotificationsScreen() {
             data={notifications}
             keyExtractor={(item) => item.messageId}
             renderItem={({ item }) => (
-              <View className="mb-3 rounded-xl border border-gray-300 p-4 bg-white dark:bg-zinc-900">
+              <TouchableOpacity
+                className="mb-3 rounded-xl border border-gray-300 p-4"
+                style={{ backgroundColor: colors.card }}
+                onPress={() => {
+                  // Example: route based on notification type
+                  if (item.data.type === 'quiz') {
+                    // router.push(`/quiz/${item.targetId}`);
+                    Alert.alert('Notification Clicked', 'Quiz Notification Clicked')
+                  } else if (item.data.type === 'NEW_NOTE') {
+                    router.push({ pathname: '/(home)/pdfviewer', params: { url: item.data.fileUrl, name: item.data.name } });
+                  } else {
+                    Alert.alert('Notification Clicked', 'Fallback Notification Clicked')
+                    // router.push('/notifications/detail'); // fallback
+                  }
+                }}
+              >
                 <Text variant="subhead" className="font-semibold">
                   {item.title}
                 </Text>
@@ -49,12 +65,11 @@ export default function NotificationsScreen() {
                     timeStyle: 'short',
                   }).format(new Date(item.sentTime))}
                 </Text>
-
-              </View>
+              </TouchableOpacity>
             )}
           />
         )}
-      </View>
+      </SafeAreaView>
     </>
   );
 }
