@@ -112,7 +112,7 @@ export default function VideoListPage() {
         elevation: 3,
         overflow: 'hidden',
       }}
-      onPress={() => router.push({ pathname: './videoplayer', params: { url: item.url, title: item.title ?? '' } })}
+      onPress={() => router.push({ pathname: '../_(test)/videoplayer', params: { url: item.url, title: item.title ?? '' } })}
     >
       {item.thumbnail && (
         <Image
