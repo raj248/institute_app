@@ -95,6 +95,8 @@ export interface NewlyAdded {
   tableName: "MCQ" | "TestPaper" | "Note" | "VideoNote";
   entityId: string;
   addedAt: string;
+  expiresAt: string;
+  displayName: string;
 }
 
 
