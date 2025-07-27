@@ -130,7 +130,7 @@ export default function McqTestPage() {
 
   const handleEndTest = () => {
     stopTimer();
-    router.replace("./testresultpage")
+    router.push("./testresultpage")
   };
 
   useEffect(() => {

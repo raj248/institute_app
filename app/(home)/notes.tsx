@@ -54,6 +54,7 @@ const Notes = () => {
       {data.map((item) => {
         return (
           <Button
+            key={item.key}
             title={item.title}
             className="w-[80%]"
             onPress={() =>
