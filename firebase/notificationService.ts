@@ -20,15 +20,6 @@ const app = getApp();
 const messaging = getMessaging(app);
 
 /**
- * ✅ GLOBAL: Background message handler for data-only payloads
- * Must be outside any function/component.
- */
-setBackgroundMessageHandler(messaging, async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-  console.log('📩 [Background Handler] Notification:', remoteMessage);
-  // Here you can trigger a local notification using notifee/react-native-push-notification if desired
-});
-
-/**
  * Request notification permissions and get FCM token
  */
 
@@ -69,6 +60,15 @@ export async function getFcmToken() {
     console.error('❌ Error getting FCM token:', error);
   }
 }
+
+/**
+ * ✅ GLOBAL: Background message handler for data-only payloads
+ * Must be outside any function/component.
+ */
+setBackgroundMessageHandler(messaging, async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+  console.log('📩 [Background Handler] Notification:', remoteMessage);
+  // Here you can trigger a local notification using notifee/react-native-push-notification if desired
+});
 
 /**
  * Set up notification listeners for foreground, background, and quit state
