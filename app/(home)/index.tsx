@@ -29,11 +29,11 @@ const Home = () => {
         onPress={() => router.push('/cafinal')}
       />
 
-      <Button
+      {/* <Button
         title='Debug'
         className="w-[80%]"
         onPress={() => router.push('/debug')}
-      />
+      /> */}
 
     </View>
   )
