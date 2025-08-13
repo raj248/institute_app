@@ -1,10 +1,12 @@
 export default {
   "expo": {
-    "name": "pj-classes-app",
-    "slug": "pj-classes-app",
+    "name": "CA Parveen Jindal Classes",
+    "slug": "pj-classes-lms",
     "version": "1.0.0",
-    "scheme": "pj-classes-app",
+    "scheme": "pj-classes-lms",
+    "githubUrl": "https://github.com/raj248/institute_app",
     "orientation": "default",
+    "icon": "./assets/icon.png",
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -38,21 +40,21 @@ export default {
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pjclasses.app"
+      "bundleIdentifier": "com.pjclasses.lms"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.pjclasses.app",
+      "package": "com.pjclasses.lms",
       "googleServicesFile": process.env.GOOGLE_SERVICES_FILE,
       "useNextNotificationsApi": true
     },
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a15a8433-d87a-403f-88cc-9f50f4290850"
+        "projectId": "62743823-ad86-4653-9a74-4a87c55e89d2"
       }
     }
   }

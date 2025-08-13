@@ -7,7 +7,7 @@ async function safeFetch<T>(
   url: string,
   options?: RequestInit
 ): Promise<{ success: boolean; error?: string; data?: T }> {
-  console.log(`Fetching ${url}`);
+  // console.log(`Fetching ${url}`);
   try {
     const res = await fetch(url, options);
     const result = await res.json();
@@ -22,6 +22,41 @@ async function safeFetch<T>(
     console.error(`Fetch error (${url}):`, error);
     return { success: false, error: (error as Error).message ?? "Unknown error" };
   }
+}
+
+
+// ------------------- User --------------------
+
+export async function registerUser(userId: string, phoneNumber: number, fcmToken?: string) {
+  return safeFetch<APIResponse<{ id: string; userId: string; phoneNumber: number; fcmToken?: string }>>(
+    `${BASE_URL}/api/user`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, phoneNumber, fcmToken }),
+    }
+  );
+}
+export async function updateFcmToken(userId: string, fcmToken: string) {
+  return safeFetch<APIResponse<{ id: string; fcmToken: string }>>(
+    `${BASE_URL}/api/user/${userId}/fcm`,
+    {
+      method: "PATCH", // ✅ Changed from PUT to PATCH
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fcmToken }),
+    }
+  );
+}
+export async function updateLastActive(userId: string) {
+  return safeFetch<APIResponse<{ id: string; lastActiveAt: string }>>(
+    `${BASE_URL}/api/user/${userId}/last-active`,
+    {
+      method: "PATCH",
+    }
+  );
+}
+export async function fetchActiveUserCount() {
+  return safeFetch<number>(`${BASE_URL}/api/user/active`);
 }
 
 // ------------------- Courses & Topics --------------------

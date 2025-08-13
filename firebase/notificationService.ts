@@ -1,5 +1,3 @@
-// firebase/notificationService.ts
-
 import { Alert, PermissionsAndroid } from 'react-native';
 import { getApp } from '@react-native-firebase/app';
 import {
@@ -14,23 +12,20 @@ import {
   FirebaseMessagingTypes
 } from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
-import { useNotificationStore } from '~/store/notification.store';
+import { useNotificationStore } from '~/stores/notification.store';
 
 const app = getApp();
 const messaging = getMessaging(app);
 
-/**
- * Request notification permissions and get FCM token
- */
-
 const requestNotificationPermission = async () => {
   const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
   if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    console.log("Notification permission granted");
+    // console.log("Notification permission granted");
   } else {
-    console.log("Notification permission denied")
+    // console.log("Notification permission denied")
   }
-}
+};
+
 export async function requestUserPermission() {
   await requestNotificationPermission();
   const authStatus = await requestPermission(messaging);
@@ -39,42 +34,25 @@ export async function requestUserPermission() {
     authStatus === AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('✅ Authorization status:', authStatus);
-    await getFcmToken();
-    await subscribeToAllDevicesTopic(); // <-- Add this
+    console.log('Notification permission granted.');
   } else {
     Alert.alert('Notification Permission', 'Permission denied. Notifications will not work.');
   }
+  return enabled
 }
 
-/**
- * Retrieve and print FCM token
- */
-export async function getFcmToken() {
-  try {
-    const token = await getToken(messaging);
-    console.log('✅ FCM Token:', token);
-    return token;
-    // TODO: Send token to your backend
-  } catch (error) {
-    console.error('❌ Error getting FCM token:', error);
-  }
-}
 
-/**
- * ✅ GLOBAL: Background message handler for data-only payloads
- * Must be outside any function/component.
- */
+
+// Background
 setBackgroundMessageHandler(messaging, async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
   console.log('📩 [Background Handler] Notification:', remoteMessage);
-  // Here you can trigger a local notification using notifee/react-native-push-notification if desired
 });
 
-/**
- * Set up notification listeners for foreground, background, and quit state
- */
-export function notificationListener() {
-  // Foreground notifications
+// Foreground/Background/Quit Listeners
+export async function notificationListener() {
+  await requestNotificationPermission()
+    .then(() => subscribeToAllDevicesTopic);
+
   onMessage(messaging, async remoteMessage => {
     console.log('📩 [Foreground] Notification:', remoteMessage);
     Toast.show({
@@ -94,10 +72,9 @@ export function notificationListener() {
     });
   });
 
-  // Background (tap)
   onNotificationOpenedApp(messaging, remoteMessage => {
     console.log('📩 [Opened from Background] Notification:', remoteMessage.notification);
-
+    // same logic...
     useNotificationStore.getState().addNotification({
       messageId: remoteMessage.messageId ?? '',
       title: remoteMessage.notification?.title ?? 'Notification',
@@ -111,11 +88,10 @@ export function notificationListener() {
       [{ text: 'OK' }]);
   });
 
-  // Quit (tap)
   getInitialNotification(messaging).then(remoteMessage => {
     if (remoteMessage) {
       console.log('📩 [Opened from Quit] Notification:', remoteMessage.notification);
-
+      // same logic...
       useNotificationStore.getState().addNotification({
         messageId: remoteMessage.messageId ?? '',
         title: remoteMessage.notification?.title ?? 'Notification',

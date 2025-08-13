@@ -4,7 +4,7 @@ import { ActivityIndicator, Button, Card } from "react-native-paper";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { router, Stack } from "expo-router";
 import { useState, useEffect, use } from "react";
-import { useTestStore } from "~/store/test.store";
+import { useTestStore } from "~/stores/test.store";
 import { MCQAnswerExplanation } from "~/types/entities";
 import { getAnswersForTestPaper } from "~/lib/api";
 

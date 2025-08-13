@@ -7,7 +7,7 @@ import { Button, RadioButton, Drawer as PaperDrawer, ActivityIndicator, MD3DarkT
 import { useColorScheme } from '~/lib/useColorScheme';
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import { getMCQForTest } from '~/lib/api';
-import { useTestStore } from '~/store/test.store';
+import { useTestStore } from '~/stores/test.store';
 
 export default function McqTestPage() {
   const navigation = useNavigation();

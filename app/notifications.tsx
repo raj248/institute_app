@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Alert, FlatList, Platform, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { useNotificationStore } from '~/store/notification.store';
+import { useNotificationStore } from '~/stores/notification.store';
 
 
 export default function NotificationsScreen() {
