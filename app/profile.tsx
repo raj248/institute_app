@@ -14,8 +14,6 @@ export default function ProfileTab() {
   const size = 256;
   const uri = `https://api.dicebear.com/9.x/${style}/png?seed=${encodeURIComponent(userId || seed)}&size=${size}&radius=16`;
 
-  console.log(`User ID: ${userId} Phone Number: ${phoneNumber}`)
-
   return (
     <SafeAreaView
       style={{

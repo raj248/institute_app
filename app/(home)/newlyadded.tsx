@@ -61,6 +61,13 @@ const NewlyAddedScreen = () => {
     )
   }
 
+  if (items.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center p-8">
+        <Text className="text-center">No newly added items found.</Text>
+      </View>
+    )
+  }
   return (
     <>
       <Stack.Screen options={{

@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, View, TouchableOpacity, Dimensions } from 'react-native';
+import { ActivityIndicator, View, TouchableOpacity, Dimensions, Linking } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
 import Pdf from 'react-native-pdf';
+import { Button } from '~/components/Button';
+
+import Download from './download';
+
 
 export default function PDFViewer() {
   const { url, name } = useLocalSearchParams<{ url?: string; name?: string }>();
   const { colors, isDarkColorScheme } = useColorScheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const pdfUrl = (process.env.EXPO_PUBLIC_API_SERVER_URL ?? '') + url;
 
@@ -60,24 +65,41 @@ export default function PDFViewer() {
           </TouchableOpacity>
         </View>
       ) : (
-        <Pdf
-          source={{ uri: pdfUrl, cache: true }}
-          style={{ flex: 1, width: Dimensions.get('window').width }}
-          trustAllCerts={false}
-          onLoadComplete={(numberOfPages, filePath) => {
-            setLoading(false);
-            console.log(`Loaded PDF with ${numberOfPages} pages from ${filePath}`);
-          }}
-          onError={(err) => {
-            console.error(err);
-            setLoading(false);
-            setError('Failed to load PDF.');
-          }}
-          onLoadProgress={(percent) => {
-            if (percent < 1) setLoading(true);
-          }}
-          enableAnnotationRendering={false}
-        />
+        <>
+          <Button
+            title="Download PDF"
+            disabled={isDownloading}
+            icon='download'
+            onPress={() => {
+              setIsDownloading(true);
+              setTimeout(() => {
+                setIsDownloading(false);
+                console.log('Download timed out')
+              }, 1000);
+              console.log('Downloading PDF...');
+            }}
+          />
+          {isDownloading && (<Download url={pdfUrl} />)}
+          <Pdf
+            source={{ uri: pdfUrl, cache: true }}
+            style={{ flex: 1, width: Dimensions.get('window').width }}
+            trustAllCerts={false}
+            onLoadComplete={(numberOfPages, filePath) => {
+              setLoading(false);
+              console.log(`Loaded PDF with ${numberOfPages} pages from ${filePath}`);
+            }}
+            onError={(err) => {
+              console.error(err);
+              setLoading(false);
+              setError('Failed to load PDF.');
+            }}
+            onLoadProgress={(percent) => {
+              if (percent < 1) setLoading(true);
+            }}
+            enableAnnotationRendering={false}
+          />
+
+        </>
       )}
     </View>
   );
