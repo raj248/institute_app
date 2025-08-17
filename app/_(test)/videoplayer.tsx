@@ -11,6 +11,8 @@ import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as ScreenOrientation from 'expo-screen-orientation';
 
+import { ToastAndroid } from 'react-native';
+
 export default function VideoPlayer() {
   const { url, title } = useLocalSearchParams<{ url?: string; title?: string }>();
   const { colors } = useColorScheme();
@@ -137,7 +139,14 @@ export default function VideoPlayer() {
             style={{ flex: 1 }}
             onMessage={(event) => {
               const data = JSON.parse(event.nativeEvent.data);
-              if (data.type === 'READY') (true);
+              if (data.type === 'READY') {
+                ToastAndroid.show('Drag from top and/or press Back to exit fullscreen', ToastAndroid.BOTTOM);
+              };
+              if (data.type === 'STATE_CHANGE') {
+                if (data.state.type === 'ended') {
+                  ToastAndroid.show('Drag from top and/or press Back to exit fullscreen', ToastAndroid.BOTTOM);
+                }
+              }
             }}
             startInLoadingState
             renderLoading={() => (

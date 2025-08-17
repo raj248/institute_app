@@ -74,9 +74,9 @@ export default function PDFViewer() {
               setIsDownloading(true);
               setTimeout(() => {
                 setIsDownloading(false);
-                console.log('Download timed out')
+                // console.log('Download timed out')
               }, 1000);
-              console.log('Downloading PDF...');
+              // console.log('Downloading PDF...');
             }}
           />
           {isDownloading && (<Download url={pdfUrl} />)}

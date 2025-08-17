@@ -6,7 +6,7 @@ export default function Download({ url }: { url?: string }) {
     // const { url } = useLocalSearchParams<{ url?: string }>();
 
     if (!url) {
-        console.log("No URL passed")
+        // console.log("No URL passed")
         return null;
     }; // No URL passed
 
