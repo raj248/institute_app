@@ -1,5 +1,13 @@
-import type { Topic, TestPaper, MCQAnswerExplanation, Note, VideoNote, NewlyAdded, SearchResult } from "~/types/entities";
-import type { APIResponse } from "~/types/api"
+import type {
+  Topic,
+  TestPaper,
+  MCQAnswerExplanation,
+  Note,
+  VideoNote,
+  NewlyAdded,
+  SearchResult,
+} from '~/types/entities';
+import type { APIResponse } from '~/types/api';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_SERVER_URL;
 
@@ -20,29 +28,28 @@ async function safeFetch<T>(
     return result;
   } catch (error) {
     console.error(`Fetch error (${url}):`, error);
-    return { success: false, error: (error as Error).message ?? "Unknown error" };
+    return { success: false, error: (error as Error).message ?? 'Unknown error' };
   }
 }
 
-
 // ------------------- User --------------------
 
-export async function registerUser(userId: string, phoneNumber: number): Promise<APIResponse<{ id: string; userId: string; phoneNumber: number;  }>> {
-  return safeFetch(
-    `${BASE_URL}/api/user`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, phoneNumber }),
-    }
-  );
+export async function registerUser(
+  userId: string,
+  phoneNumber: string
+): Promise<APIResponse<{ id: string; userId: string; phoneNumber: number }>> {
+  return safeFetch(`${BASE_URL}/api/user`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, phoneNumber }),
+  });
 }
 
 export async function updateLastActive(userId: string) {
   return safeFetch<APIResponse<{ id: string; lastActiveAt: string }>>(
     `${BASE_URL}/api/user/${userId}/last-active`,
     {
-      method: "PATCH",
+      method: 'PATCH',
     }
   );
 }
@@ -62,7 +69,9 @@ export async function getTopicById(topicId: string): Promise<APIResponse<Topic>>
 
 // ------------------- Test Papers --------------------
 
-export async function getAllTestPapersByTopicId(topicId: string): Promise<APIResponse<TestPaper[]>> {
+export async function getAllTestPapersByTopicId(
+  topicId: string
+): Promise<APIResponse<TestPaper[]>> {
   return safeFetch(`${BASE_URL}/api/topics/${topicId}/testpapers`);
 }
 
@@ -84,7 +93,10 @@ export async function getAnswersForTestPaper(
 
 // -------------------- Notes --------------------
 
-export async function getNotesByTopic(topicId: string, type: string = "all"): Promise<APIResponse<Note[]>> {
+export async function getNotesByTopic(
+  topicId: string,
+  type: string = 'all'
+): Promise<APIResponse<Note[]>> {
   return safeFetch(`${BASE_URL}/api/notes/topic/${topicId}?type=${encodeURIComponent(type)}`);
 }
 
@@ -99,7 +111,7 @@ export async function getNoteById(noteId: string): Promise<APIResponse<Note>> {
 
 export async function getVideoNotesByTopicId(
   topicId: string,
-  type: string = "all"
+  type: string = 'all'
 ): Promise<APIResponse<VideoNote[]>> {
   const url = `${BASE_URL}/api/videonotes/topic/${topicId}?type=${encodeURIComponent(type)}`;
   return safeFetch(url);
