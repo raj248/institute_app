@@ -16,11 +16,11 @@ const Home = () => {
       const userId = await getStoredUserId();
       if (!phoneNumber) {
         router.push('/_(test)/dashboard');
-        console.log("No phone number found, redirecting to dashboard")
+        // console.log("No phone number found, redirecting to dashboard")
       } else {
         if (userId) useUserStore.getState().setUserId(userId);
         useUserStore.getState().setPhoneNumber(Number(phoneNumber));
-        console.log("Phone number found, redirecting to testlistpage")
+        // console.log("Phone number found, redirecting to testlistpage")
       }
     })()
   }, [])

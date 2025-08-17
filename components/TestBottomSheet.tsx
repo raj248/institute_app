@@ -27,7 +27,7 @@ export default function TestBottomSheet({ test, setOpenSheet }: { test: TestPape
           // onPress={() => {router.push(`/test/${test.id}`); bottomSheetModalRef.current?.close(); }}
           onPress={() => {
             bottomSheetModalRef.current?.close();
-            router.push(`../_(test)/mcqtestpage?testId=${test.id}`);
+            router.push(`../_(test)/quiz?testId=${test.id}`);
           }}
           className="bg-green-600 rounded-lg p-4 mt-4"
         >

@@ -1,4 +1,4 @@
-export type CourseType = "CAInter" | "CAFinal";
+export type CourseType = 'CAInter' | 'CAFinal';
 
 export interface Course {
   id: string;
@@ -31,13 +31,12 @@ export interface Topic {
   videoNoteCountByType?: Record<string, number>;
 }
 
-
 export interface TestPaper {
   id: string;
   name: string;
   description?: string;
   timeLimitMinutes?: number;
-  totalMarks?: string
+  totalMarks?: string;
   topicId: string;
   createdAt: string;
   updatedAt: string;
@@ -51,12 +50,14 @@ export interface MCQ {
   id: string;
   question: string;
   options: Record<string, string>;
-  marks: number;
+  marks: number; // @DEPRECATED
+  correctAnswer: 'a' | 'b' | 'c' | 'd';
+  explanation: string;
 }
 
 export type MCQAnswerExplanation = {
   id: string;
-  answer: "a" | "b" | "c" | "d";
+  answer: 'a' | 'b' | 'c' | 'd';
   explanation: string;
 };
 
@@ -64,9 +65,9 @@ export interface Note {
   id: string;
   name: string;
   description?: string;
-  type: "rtp" | "mtp" | "other";  // added as per schema
+  type: 'rtp' | 'mtp' | 'other'; // added as per schema
   topicId: string;
-  courseType: "CAInter" | "CAFinal";
+  courseType: 'CAInter' | 'CAFinal';
   fileName: string;
   fileUrl: string;
   fileSize: number;
@@ -80,9 +81,9 @@ export interface VideoNote {
   url: string;
   name: string;
   description?: string;
-  type: "rtp" | "mtp" | "revision" | "other"; // added as per schema
+  type: 'rtp' | 'mtp' | 'revision' | 'other'; // added as per schema
   topicId: string;
-  courseType: "CAInter" | "CAFinal";
+  courseType: 'CAInter' | 'CAFinal';
   title?: string;
   thumbnail?: string;
   createdAt: string;
@@ -92,17 +93,16 @@ export interface VideoNote {
 
 export interface NewlyAdded {
   id: string;
-  tableName: "MCQ" | "TestPaper" | "Note" | "VideoNote";
+  tableName: 'MCQ' | 'TestPaper' | 'Note' | 'VideoNote';
   entityId: string;
   addedAt: string;
   expiresAt: string;
   displayName: string;
 }
 
-
 export interface SearchResult {
   topics: Topic[];
   testPapers: TestPaper[];
   notes: Note[];
   videoNotes: VideoNote[];
-};
+}

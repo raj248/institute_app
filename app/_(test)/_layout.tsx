@@ -14,11 +14,11 @@ export default function TestLayout() {
         style={isDarkColorScheme ? 'light' : 'dark'}
         animated={true}
         backgroundColor={colors.background}
-        hidden={true}
+      // hidden={true}
       />
       <Stack
         screenOptions={{
-          headerShown: false, // if you want immersive test mode
+          headerShown: true, // if you want immersive test mode
         }}
       />
     </>

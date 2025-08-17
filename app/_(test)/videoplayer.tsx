@@ -126,6 +126,7 @@ export default function VideoPlayer() {
           title: title ?? 'Video Player',
           animation: 'slide_from_right',
           headerRight: () => <HeaderIcons />,
+          headerShown: false,
         }}
       />
       {videoId ? (
