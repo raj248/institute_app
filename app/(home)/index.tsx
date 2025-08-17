@@ -4,7 +4,7 @@ import { Button } from '~/components/Button' // assuming you have a reusable But
 import { useRouter } from 'expo-router'
 import { useColorScheme } from '~/lib/useColorScheme'
 import { useUserStore } from '~/stores/user.store'
-import { getStoredPhoneNumber } from '~/utils/device-info'
+import { getStoredPhoneNumber, getStoredUserId } from '~/utils/device-info'
 
 const Home = () => {
   const { colors } = useColorScheme()
@@ -13,10 +13,12 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       const phoneNumber = await getStoredPhoneNumber();
+      const userId = await getStoredUserId();
       if (!phoneNumber) {
         router.push('/_(test)/dashboard');
         console.log("No phone number found, redirecting to dashboard")
       } else {
+        if (userId) useUserStore.getState().setUserId(userId);
         useUserStore.getState().setPhoneNumber(Number(phoneNumber));
         console.log("Phone number found, redirecting to testlistpage")
       }

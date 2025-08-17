@@ -6,6 +6,7 @@ export const unstable_settings = {
 import { Tabs, useSegments } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useColorScheme } from "~/lib/useColorScheme";
+import HeaderIcons from "~/components/HeaderIcons";
 
 export default function RootLayout() {
   const { colorScheme, isDarkColorScheme } = useColorScheme();
@@ -42,6 +43,7 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color={color} size={size} />
           ),
+          animation: 'shift',
         }}
       />
       <Tabs.Screen
@@ -51,6 +53,7 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="search" color={color} size={size} />
           ),
+          animation: 'shift',
         }}
       />
       <Tabs.Screen
@@ -60,6 +63,7 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="notifications" color={color} size={size} />
           ),
+          animation: 'shift',
         }}
       />
       <Tabs.Screen
@@ -69,6 +73,7 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" color={color} size={size} />
           ),
+          animation: 'shift',
         }}
       />
       <Tabs.Screen
@@ -76,6 +81,7 @@ export default function RootLayout() {
         options={{
           tabBarButton: () => null,
           tabBarItemStyle: { display: "none" },
+          animation: 'shift',
         }}
       />
 
