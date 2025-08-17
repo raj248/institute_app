@@ -24,7 +24,7 @@ export default function NoteCard({ item }: { item: Note }) {
       }}
       onPress={() => router.push({ pathname: './pdfviewer', params: { url: item.fileUrl, name: item.name } })}
     >
-      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
+      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4, color: isDarkColorScheme ? '#aaa' : '#555' }}>{item.name}</Text>
       {item.description && (
         <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>{item.description}</Text>
       )}

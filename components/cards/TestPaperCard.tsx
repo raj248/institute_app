@@ -34,7 +34,7 @@ export default function TestPaperCard({
         openSheet()
       }}
     >
-      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
+      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4, color: isDarkColorScheme ? '#aaa' : '#555' }}>{item.name}</Text>
       <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>{item.description}</Text>
       <View className='flex-row justify-between items-center'>
         <Text style={{ fontSize: 12, color: isDarkColorScheme ? '#aaa' : '#888' }}>{`${item.mcqCount} Questions`}</Text>

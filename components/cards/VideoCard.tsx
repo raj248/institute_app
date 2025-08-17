@@ -45,7 +45,7 @@ export default function VideoCard({ item }: { item: VideoNote }) {
         />
       )}
       <View style={{ padding: 12 }}>
-        <Text style={{ fontSize: 16, fontWeight: '600' }}>{video.title ?? 'Untitled Video'}</Text>
+        <Text style={{ fontSize: 16, fontWeight: '600', color: isDarkColorScheme ? '#aaa' : '#555' }}>{video.title ?? 'Untitled Video'}</Text>
         <Text style={{ fontSize: 12, color: isDarkColorScheme ? '#aaa' : '#888', marginTop: 4 }}>
           Tap to play on embedded player
         </Text>
