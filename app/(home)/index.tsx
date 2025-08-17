@@ -9,8 +9,8 @@ import { getStoredPhoneNumber } from '~/utils/device-info'
 const Home = () => {
   const { colors } = useColorScheme()
   const router = useRouter()
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     (async () => {
       const phoneNumber = await getStoredPhoneNumber();
       if (!phoneNumber) {
@@ -21,7 +21,7 @@ const Home = () => {
         console.log("Phone number found, redirecting to testlistpage")
       }
     })()
-  },[])
+  }, [])
 
   return (
     <View className='flex-1 items-center justify-center gap-4 px-4'>

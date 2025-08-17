@@ -10,12 +10,12 @@ type ButtonProps = {
   valid?: boolean;
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<View, ButtonProps>(({ title, icon, valid, ...touchableProps }, ref) => {
+export const Button = forwardRef<View, ButtonProps>(({ title, icon, valid = true, ...touchableProps }, ref) => {
   const { colors } = useColorScheme();
   return (
     <TouchableOpacity ref={ref} {...touchableProps} style={[touchableProps.style, {
       alignItems: 'center',
-      backgroundColor: valid ? '#ccc' : '#1081ddff',
+      backgroundColor: valid ? colors.grey5 : '#1081ddff',
       borderRadius: 14,
       elevation: 5,
       flexDirection: 'row',
