@@ -1,4 +1,4 @@
-import { Alert, PermissionsAndroid } from 'react-native';
+import { Alert, AppRegistry, PermissionsAndroid } from 'react-native';
 import { getApp } from '@react-native-firebase/app';
 import {
   getMessaging,
@@ -115,3 +115,18 @@ export async function subscribeToAllDevicesTopic() {
     console.error('❌ Error subscribing to "all-devices" topic:', error);
   }
 }
+
+
+// AppRegistry.registerComponent('main', () => App);
+
+// AppRegistry.registerHeadlessTask(
+//   'ReactNativeFirebaseMessagingHeadlessTask',
+//   () =>setBackgroundMessageHandler(messaging, async remoteMessage => {
+//     console.log('Headless task message:', remoteMessage);
+//   })
+// );
+
+// AppRegistry.registerHeadlessTask(
+//   'ReactNativeFirebaseMessagingHeadlessTask',
+//   () => async () => {}
+// );

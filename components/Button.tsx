@@ -7,14 +7,15 @@ import { useColorScheme } from '~/lib/useColorScheme';
 type ButtonProps = {
   title?: string;
   icon?: string;
+  valid?: boolean;
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<View, ButtonProps>(({ title, icon, ...touchableProps }, ref) => {
+export const Button = forwardRef<View, ButtonProps>(({ title, icon, valid, ...touchableProps }, ref) => {
   const { colors } = useColorScheme();
   return (
     <TouchableOpacity ref={ref} {...touchableProps} style={[touchableProps.style, {
       alignItems: 'center',
-      backgroundColor: colors.grey5,
+      backgroundColor: valid ? '#ccc' : '#1081ddff',
       borderRadius: 14,
       elevation: 5,
       flexDirection: 'row',

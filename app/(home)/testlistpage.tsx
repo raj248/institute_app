@@ -32,15 +32,17 @@ export default function TestListPage() {
 
   const loadTestPapers = async () => {
     if (!topicId) return;
-    setLoading(true);
+    // setLoading(true);
     try {
       const res = await getAllTestPapersByTopicId(topicId as string);
       setTestPapers(res.data ?? null);
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
+
+    setRefreshing(false);
   };
 
   useEffect(() => {

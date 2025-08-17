@@ -56,12 +56,6 @@ export default function McqTestPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log("Drawer Visible: ", drawerVisible);
-
-  }, [drawerVisible]);
-
-
   const loadPaper = async () => {
     if (!testId) {
       setError('Test ID not provided.');

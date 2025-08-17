@@ -27,26 +27,17 @@ async function safeFetch<T>(
 
 // ------------------- User --------------------
 
-export async function registerUser(userId: string, phoneNumber: number, fcmToken?: string) {
-  return safeFetch<APIResponse<{ id: string; userId: string; phoneNumber: number; fcmToken?: string }>>(
+export async function registerUser(userId: string, phoneNumber: number): Promise<APIResponse<{ id: string; userId: string; phoneNumber: number;  }>> {
+  return safeFetch(
     `${BASE_URL}/api/user`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, phoneNumber, fcmToken }),
+      body: JSON.stringify({ userId, phoneNumber }),
     }
   );
 }
-export async function updateFcmToken(userId: string, fcmToken: string) {
-  return safeFetch<APIResponse<{ id: string; fcmToken: string }>>(
-    `${BASE_URL}/api/user/${userId}/fcm`,
-    {
-      method: "PATCH", // ✅ Changed from PUT to PATCH
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fcmToken }),
-    }
-  );
-}
+
 export async function updateLastActive(userId: string) {
   return safeFetch<APIResponse<{ id: string; lastActiveAt: string }>>(
     `${BASE_URL}/api/user/${userId}/last-active`,
@@ -62,7 +53,7 @@ export async function fetchActiveUserCount() {
 // ------------------- Courses & Topics --------------------
 
 export async function getTopicsByCourseType(courseType: string): Promise<APIResponse<Topic[]>> {
-  return safeFetch(`${BASE_URL}/api/courses/${courseType}/topics`, { cache: "no-store" });
+  return safeFetch(`${BASE_URL}/api/courses/${courseType}/topics`);
 }
 
 export async function getTopicById(topicId: string): Promise<APIResponse<Topic>> {

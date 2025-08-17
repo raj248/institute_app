@@ -3,6 +3,8 @@ import DeviceInfo from 'react-native-device-info';
 import CryptoJS from 'crypto-js';
 
 const USER_ID_KEY = 'USER_ID';
+const PHONE_KEY = 'PHONE_NUMBER';
+
 const BASE62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 // Base62 encode BigInt
@@ -50,4 +52,12 @@ export async function getStoredUserId(): Promise<string | null> {
 
 export async function setStoredUserId(id: string): Promise<void> {
   await AsyncStorage.setItem(USER_ID_KEY, id);
+}
+
+export async function getStoredPhoneNumber(): Promise<string | null> {
+  return await AsyncStorage.getItem(PHONE_KEY);
+}
+
+export async function setStoredPhoneNumber(phoneNumber: string): Promise<void> {
+  await AsyncStorage.setItem(PHONE_KEY, phoneNumber);
 }
