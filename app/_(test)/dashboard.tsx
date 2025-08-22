@@ -1,9 +1,9 @@
 import { View, Image } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { TextInput } from 'react-native-paper';
+import { MD2LightTheme, MD3DarkTheme, TextInput } from 'react-native-paper';
 import { useLayoutEffect, useState } from 'react';
-import { router, useNavigation } from 'expo-router';
+import { router, Stack, useNavigation } from 'expo-router';
 import { Button } from '~/components/Button';
 import { register } from '~/firebase/register';
 
@@ -13,7 +13,7 @@ export default function HomeTabIndex() {
   useLayoutEffect(() => {
     navigation.setOptions({ tabBarStyle: { display: 'none' } });
   }, [navigation]);
-  const { colors } = useColorScheme();
+  const { colors, isDarkColorScheme } = useColorScheme();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -39,6 +39,7 @@ export default function HomeTabIndex() {
         padding: 24,
       }}
     >
+      <Stack.Screen options={{ headerShown: false }} />
       <Image
         source={require('~/assets/icon.png')}
         style={{ width: 150, height: 150, marginBottom: 24 }}
@@ -64,6 +65,7 @@ export default function HomeTabIndex() {
         onChangeText={setPhoneNumber}
         value={phoneNumber}
         style={{ width: '100%' }}
+        theme={isDarkColorScheme ? MD3DarkTheme : MD2LightTheme}
       />
       {error && <Text variant="callout" className="text-center text-red-500 pt-4">{error}</Text>}
       <Button
