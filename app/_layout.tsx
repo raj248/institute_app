@@ -10,6 +10,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '~/lib/useColorScheme';
 
 import HomeIcon from '../assets/svg/home';
+import SearchIcon from '../assets/svg/search';
+import NotificationIcon from '../assets/svg/notification';
+import ProfileIcon from '../assets/svg/profile';
+import { TouchableOpacity } from 'react-native';
+
+const NoRippleButton = ({ children, onPress, style }: any) => (
+  <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={style}>
+    {children}
+  </TouchableOpacity>
+);
 
 export default function RootLayout() {
   const { colorScheme, isDarkColorScheme } = useColorScheme();
@@ -44,6 +54,7 @@ export default function RootLayout() {
         // tabBarShowLabel: false,
         // tabBarVariant: "material",
         // tabBarPosition: "left",
+        tabBarButton: (props) => <NoRippleButton {...props} />,
       }}>
       <Tabs.Screen
         name="(home)"
@@ -63,7 +74,9 @@ export default function RootLayout() {
         name="search"
         options={{
           title: 'Search',
-          tabBarIcon: ({ color, size }) => <Ionicons name="search" color={color} size={size} />,
+          tabBarIcon: ({ color, size, focused }) => (
+            <SearchIcon color={color} width={size} height={size} focused={focused} />
+          ),
           animation: 'shift',
           headerStyle: {
             backgroundColor: '#fff',
@@ -74,8 +87,8 @@ export default function RootLayout() {
         name="notifications"
         options={{
           title: 'Notifications',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="notifications" color={color} size={size} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <NotificationIcon color={color} width={size} height={size} focused={focused} />
           ),
           animation: 'shift',
         }}
@@ -84,7 +97,9 @@ export default function RootLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person" color={color} size={size} />,
+          tabBarIcon: ({ color, size, focused }) => (
+            <ProfileIcon color={color} width={size} height={size} focused={focused} />
+          ),
           animation: 'shift',
         }}
       />

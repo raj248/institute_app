@@ -25,7 +25,7 @@ export const Button = forwardRef<View, ButtonProps>(
           touchableProps.style,
           {
             alignItems: 'center',
-            backgroundColor: color ? color : valid ? '#3f3d91' : '#1081ddff',
+            backgroundColor: color ? color : valid ? '#3f3d91' : '#74a4ccff',
             borderRadius: 14,
             elevation: 2,
             flexDirection: 'row',
