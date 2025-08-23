@@ -1,12 +1,12 @@
-import { FlatList, SafeAreaView, TouchableOpacity, View } from "react-native";
-import { Text } from "~/components/nativewindui/Text";
-import { ActivityIndicator, Button, Card } from "react-native-paper";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { router, Stack } from "expo-router";
-import { useState, useEffect, use } from "react";
-import { useTestStore } from "~/stores/test.store";
-import { MCQAnswerExplanation } from "~/types/entities";
-import { getAnswersForTestPaper } from "~/lib/api";
+import { FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
+import { Text } from '~/components/nativewindui/Text';
+import { ActivityIndicator, Button, Card } from 'react-native-paper';
+import { useColorScheme } from '~/lib/useColorScheme';
+import { router, Stack } from 'expo-router';
+import { useState, useEffect, use } from 'react';
+import { useTestStore } from '~/stores/test.store';
+import { MCQAnswerExplanation } from '~/types/entities';
+import { getAnswersForTestPaper } from '~/lib/api';
 
 export default function TestResultPage() {
   const { colors, isDarkColorScheme } = useColorScheme();
@@ -14,7 +14,7 @@ export default function TestResultPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [correctAnswers, setCorrectAnswers] = useState<MCQAnswerExplanation[]>();
-  const { testData, answers } = useTestStore(state => ({
+  const { testData, answers } = useTestStore((state) => ({
     testData: state.testData,
     answers: state.answers,
   }));
@@ -23,13 +23,17 @@ export default function TestResultPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await getAnswersForTestPaper(testData?.id ?? "")
+      if (!testData?.id) {
+        setError('Test ID not provided.');
+        setLoading(false);
+        return;
+      }
+      const res = await getAnswersForTestPaper(testData?.id ?? '');
       if (res.error) {
         setError(res.error);
         setLoading(false);
         return;
-      }
-      else if (res.data) {
+      } else if (res.data) {
         setCorrectAnswers(res.data);
       }
     } catch (error) {
@@ -38,7 +42,7 @@ export default function TestResultPage() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     getAnswers();
@@ -70,18 +74,19 @@ export default function TestResultPage() {
   if (error) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center px-8">
-        <Text className="text-center mb-4">{error}</Text>
+        <Text className="mb-4 text-center">{error}</Text>
         <TouchableOpacity
           onPress={getAnswers}
           disabled={loading}
           style={{
-            backgroundColor: "#f1b672ff",
+            backgroundColor: '#f1b672ff',
             paddingVertical: 10,
             paddingHorizontal: 20,
             borderRadius: 8,
-          }}
-        >
-          <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>Try Again</Text>
+          }}>
+          <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>
+            Try Again
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -96,22 +101,21 @@ export default function TestResultPage() {
   }
   return (
     <SafeAreaView className="flex-1 px-4" style={{ backgroundColor: colors.background }}>
-      <Stack.Screen options={{
-        title: testData.name,
-        animation: "simple_push",
-        headerShown: false,
-        navigationBarHidden: true,
-      }}
+      <Stack.Screen
+        options={{
+          title: testData.name,
+          animation: 'simple_push',
+          headerShown: false,
+          navigationBarHidden: true,
+        }}
       />
 
       {/* Score Display */}
-      <View className="items-center mt-6 mb-4 justify-center">
-        <Text style={{ color: colors.primary }} variant={"largeTitle"}>
+      <View className="mb-4 mt-6 items-center justify-center">
+        <Text style={{ color: colors.primary }} variant={'largeTitle'}>
           {score}
         </Text>
-        <Text variant={"subhead"}>
-          out of {total}
-        </Text>
+        <Text variant={'subhead'}>out of {total}</Text>
       </View>
 
       {/* Results List */}
@@ -121,20 +125,17 @@ export default function TestResultPage() {
         contentContainerStyle={{ paddingBottom: 16 }}
         renderItem={({ item }) => {
           const selected = answers[item.id];
-          const correctAnswer = correctAnswers?.find(mcq => mcq.id === item.id)?.answer;
+          const correctAnswer = correctAnswers?.find((mcq) => mcq.id === item.id)?.answer;
           const isCorrect = selected === correctAnswer;
 
           return (
             <Card
               style={{
                 marginVertical: 8,
-                backgroundColor: isDarkColorScheme ? "#222" : "#fff",
-              }}
-            >
+                backgroundColor: isDarkColorScheme ? '#222' : '#fff',
+              }}>
               <Card.Content>
-                <Text style={{ fontWeight: "600", marginBottom: 4 }}>
-                  {item.question}
-                </Text>
+                <Text style={{ fontWeight: '600', marginBottom: 4 }}>{item.question}</Text>
 
                 {Object.entries(item.options).map(([key, value]) => (
                   <Text
@@ -142,15 +143,14 @@ export default function TestResultPage() {
                     style={{
                       color:
                         key === correctAnswer
-                          ? "green"
+                          ? 'green'
                           : key === selected
                             ? isCorrect
-                              ? "green"
-                              : "red"
+                              ? 'green'
+                              : 'red'
                             : colors.foreground,
-                      fontWeight: key === selected ? "bold" : "normal",
-                    }}
-                  >
+                      fontWeight: key === selected ? 'bold' : 'normal',
+                    }}>
                     {key.toUpperCase()}. {value}
                   </Text>
                 ))}
@@ -158,11 +158,10 @@ export default function TestResultPage() {
                 <Text
                   style={{
                     marginTop: 6,
-                    color: isDarkColorScheme ? "#ccc" : "#555",
-                    fontStyle: "italic",
-                  }}
-                >
-                  Explanation: {correctAnswers?.find(mcq => mcq.id === item.id)?.explanation}
+                    color: isDarkColorScheme ? '#ccc' : '#555',
+                    fontStyle: 'italic',
+                  }}>
+                  Explanation: {correctAnswers?.find((mcq) => mcq.id === item.id)?.explanation}
                 </Text>
               </Card.Content>
             </Card>
@@ -172,9 +171,11 @@ export default function TestResultPage() {
 
       <Button
         mode="contained"
-        onPress={() => { router.navigate("/(home)"); router.dismissAll() }}
-        style={{ marginVertical: 12 }}
-      >
+        onPress={() => {
+          router.navigate('/(home)');
+          router.dismissAll();
+        }}
+        style={{ marginVertical: 12 }}>
         Done
       </Button>
     </SafeAreaView>
