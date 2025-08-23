@@ -22,7 +22,7 @@ export const Button = forwardRef<View, ButtonProps>(
           touchableProps.style,
           {
             alignItems: 'center',
-            backgroundColor: valid ? '#ffffff' : '#1081ddff',
+            backgroundColor: valid ? '#3f3d91' : '#1081ddff',
             borderRadius: 14,
             elevation: 2,
             flexDirection: 'row',
@@ -30,8 +30,10 @@ export const Button = forwardRef<View, ButtonProps>(
             padding: 16,
           },
         ]}>
-        {icon && <Icon size={24} color={colors.foreground} source={icon} />}
-        <Text style={{ fontSize: fontSize }}>{title}</Text>
+        {icon && <Icon size={24} color="white" source={icon} />}
+        <Text className="ml-2" style={{ fontSize: fontSize, color: 'white' }}>
+          {title}
+        </Text>
       </TouchableOpacity>
     );
   }

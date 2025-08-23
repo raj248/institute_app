@@ -20,8 +20,7 @@ export default function HomeTabIndex() {
   const handler = async () => {
     const user = await register(Number(phoneNumber));
     if (user.success && user.data) {
-      router.push('/(home)');
-      router.dismissAll();
+      router.replace('/(home)');
     } else {
       console.error('Error registering user:', user.error);
       setError('Error registering user. Please try again. ' + user.error);
@@ -44,7 +43,7 @@ export default function HomeTabIndex() {
         resizeMode="contain"
       />
       <Text variant="largeTitle" className="pb-4 text-center">
-        PJ Classes
+        CA Parveen Jindal Classes
       </Text>
 
       <Text variant="title3" className="pb-2 text-center">
