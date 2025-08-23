@@ -7,10 +7,10 @@ import { Platform } from 'react-native';
 import { COLORS } from '~/theme/colors';
 
 function useColorScheme() {
-  const systemScheme = useSystemColorScheme(); // 'light' | 'dark' | null
-  const { colorScheme: nativewindScheme, setColorScheme: setNativewindScheme } = useNativewindColorScheme();
+  const { colorScheme: nativewindScheme, setColorScheme: setNativewindScheme } =
+    useNativewindColorScheme();
 
-  const colorScheme = nativewindScheme ?? systemScheme ?? 'light';
+  const colorScheme = 'light';
   const [currentScheme, setCurrentScheme] = React.useState<'light' | 'dark'>(colorScheme);
 
   // Sync navigation bar and nativewind AFTER mount only
@@ -23,7 +23,7 @@ function useColorScheme() {
   }, [colorScheme]);
 
   const toggleColorScheme = React.useCallback(() => {
-    const nextScheme = currentScheme === 'light' ? 'dark' : 'light';
+    const nextScheme = currentScheme === 'light' ? 'light' : 'light';
     setNativewindScheme(nextScheme);
     setCurrentScheme(nextScheme);
     if (Platform.OS === 'android') {
@@ -33,7 +33,8 @@ function useColorScheme() {
 
   return {
     colorScheme: currentScheme,
-    isDarkColorScheme: currentScheme === 'dark',
+    // isDarkColorScheme: currentScheme === 'dark',
+    isDarkColorScheme: false,
     setColorScheme: setNativewindScheme,
     toggleColorScheme,
     colors: COLORS[currentScheme],

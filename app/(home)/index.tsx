@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { useUserStore } from '~/stores/user.store';
 import { getStoredPhoneNumber, getStoredUserId } from '~/utils/device-info';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Home = () => {
   const { colors } = useColorScheme();
@@ -26,7 +27,7 @@ const Home = () => {
   }, []);
 
   return (
-    <View
+    <SafeAreaView
       className="flex-1 items-center justify-center gap-4 px-4"
       style={{
         backgroundColor: '#fbfbfb',
@@ -57,7 +58,7 @@ const Home = () => {
         className="w-[80%]"
         onPress={() => router.push('/debug')}
       /> */}
-    </View>
+    </SafeAreaView>
   );
 };
 

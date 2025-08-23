@@ -1,3 +1,5 @@
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 export const unstable_settings = {
   initialRouteName: '(home)',
   exclude: ['_(test)'],
@@ -13,6 +15,7 @@ export default function RootLayout() {
   const segments = useSegments();
 
   const hideTabBar = segments[0] === '_(test)';
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -23,7 +26,8 @@ export default function RootLayout() {
               display: 'none',
             }
           : {
-              height: 65,
+              paddingBottom: insets.bottom,
+              height: 65 + insets.bottom,
               backgroundColor: colorScheme === 'dark' ? '#222' : '#fff',
               elevation: 5,
               shadowColor: '#000',

@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, TouchableOpacity, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fuse from 'fuse.js';
@@ -46,7 +53,7 @@ export default function TopicListPage() {
   });
 
   const [query, setQuery] = useState('');
-  const filteredData = query ? fuse.search(query).map((res) => res.item) : topics ?? [];
+  const filteredData = query ? fuse.search(query).map((res) => res.item) : (topics ?? []);
 
   const renderItem = ({ item }: { item: Topic }) => (
     <TouchableOpacity
@@ -76,12 +83,14 @@ export default function TopicListPage() {
         } else if (pageType === 'rtp') {
           router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'rtp' } });
         } else if (pageType === 'revision') {
-          router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'revision' } });
+          router.push({
+            pathname: './videolistpage',
+            params: { topicId: item.id, type: 'revision' },
+          });
         } else {
           router.push({ pathname: './+not-found' });
         }
-      }}
-    >
+      }}>
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
       <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
         {item.description}
@@ -91,26 +100,28 @@ export default function TopicListPage() {
           fontSize: 12,
           color: isDarkColorScheme ? '#aaa' : '#888',
           textAlign: 'right',
-        }}
-      >
+        }}>
         {pageType === 'mcq'
           ? `${item.testPaperCount} Tests`
           : (pageType as string)?.startsWith('notes_')
             ? `${item.noteCountByType?.[(pageType as string).replace('notes_', '')] ?? 0} Notes`
             : `${item.videoNoteCountByType?.[pageType as string] ?? 0} Videos`}
       </Text>
-
-
     </TouchableOpacity>
   );
 
-  if (!course) return <SafeAreaView><Text className="text-center p-4">Course not found.</Text></SafeAreaView>;
+  if (!course)
+    return (
+      <SafeAreaView>
+        <Text className="p-4 text-center">Course not found.</Text>
+      </SafeAreaView>
+    );
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
         options={{
-          title: 'Topics',
+          title: 'Chapters',
           animation: 'slide_from_right',
           headerRight: () => <HeaderIcons />,
         }}
@@ -144,17 +155,18 @@ export default function TopicListPage() {
         </View>
       ) : error ? (
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-center mb-4">{error}</Text>
+          <Text className="mb-4 text-center">{error}</Text>
           <TouchableOpacity
             onPress={fetchTopics}
             style={{
-              backgroundColor: "#f1b672ff",
+              backgroundColor: '#f1b672ff',
               paddingVertical: 10,
               paddingHorizontal: 20,
               borderRadius: 8,
-            }}
-          >
-            <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>Try Again</Text>
+            }}>
+            <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>
+              Try Again
+            </Text>
           </TouchableOpacity>
         </View>
       ) : (

@@ -45,7 +45,7 @@ export default function RootLayout() {
   } as const;
 
   const INDEX_OPTIONS = {
-    title: 'PJ Classes',
+    title: 'CA Parveen Jindal Classes',
 
     headerStyle: {
       backgroundColor: '#fff',

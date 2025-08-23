@@ -88,8 +88,8 @@ export default function TestListPage() {
         elevation: 3,
       }}
       onPress={() => {
-        setSelectedTest(item);
-        // openSheet();
+        setSelectedTest(null);
+        setTimeout(() => setSelectedTest(item), 0); // force re-trigger
       }}>
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
       <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
