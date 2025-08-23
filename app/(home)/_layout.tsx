@@ -25,7 +25,8 @@ export default function RootLayout() {
   const SCREEN_OPTIONS = {
     animation: 'ios_from_right',
     headerStyle: {
-      elevation: 0, // Android shadow
+      elevation: 5,
+      shadowColor: '#000', // Android shadow
       shadowOpacity: 0, // iOS shadow
       backgroundColor: colors.background,
     },
@@ -44,22 +45,12 @@ export default function RootLayout() {
   } as const;
 
   const INDEX_OPTIONS = {
-    headerLargeTitle: true,
     title: 'PJ Classes',
-    headerRight: () => <HeaderIcons />,
-    headerTitleStyle: {
-      fontWeight: '700',
-      fontSize: 22,
-      letterSpacing: 0.5,
+
+    headerStyle: {
+      backgroundColor: '#fff',
     },
-  } as const;
-
-
-  const NOTIFICATION_OPTIONS = {
-    presentation: 'modal',
-    animation: 'fade_from_bottom',
-    title: 'Notifications',
-    headerRight: () => <ThemeToggle />,
+    headerRight: () => <HeaderIcons />,
   } as const;
 
   useEffect(() => {
@@ -79,10 +70,20 @@ export default function RootLayout() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
           <NavThemeProvider value={NAV_THEME[colorScheme]}>
-            <PaperProvider >
+            <PaperProvider>
               <Stack screenOptions={SCREEN_OPTIONS}>
                 <Stack.Screen name="index" options={INDEX_OPTIONS} />
                 <Stack.Screen name="modal" options={MODAL_OPTIONS} />
+                <Stack.Screen name="cafinal" options={INDEX_OPTIONS} />
+                <Stack.Screen name="cainter" options={INDEX_OPTIONS} />
+                <Stack.Screen name="newlyadded" options={INDEX_OPTIONS} />
+                <Stack.Screen name="notelistpage" options={INDEX_OPTIONS} />
+                <Stack.Screen name="notes" options={INDEX_OPTIONS} />
+                <Stack.Screen name="pdfviewer" options={INDEX_OPTIONS} />
+                <Stack.Screen name="testlistpage" options={INDEX_OPTIONS} />
+                <Stack.Screen name="topiclistpage" options={INDEX_OPTIONS} />
+                <Stack.Screen name="videolistpage" options={INDEX_OPTIONS} />
+
                 {/* <Stack.Screen name="notifications" options={NOTIFICATION_OPTIONS} /> */}
               </Stack>
               <Toast />

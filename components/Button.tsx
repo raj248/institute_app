@@ -8,31 +8,40 @@ type ButtonProps = {
   title?: string;
   icon?: string;
   valid?: boolean;
+  fontSize?: number;
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<View, ButtonProps>(({ title, icon, valid = true, ...touchableProps }, ref) => {
-  const { colors } = useColorScheme();
-  return (
-    <TouchableOpacity ref={ref} {...touchableProps} style={[touchableProps.style, {
-      alignItems: 'center',
-      backgroundColor: valid ? colors.grey5 : '#1081ddff',
-      borderRadius: 14,
-      elevation: 5,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      padding: 16,
-      shadowColor: '#000',
-      shadowOffset: {
-        height: 2,
-        width: 0,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-    }]}>
-      {icon && <Icon size={24} color={colors.foreground} source={icon} />}
-      <Text>{title}</Text>
-    </TouchableOpacity>
-  );
-});
+export const Button = forwardRef<View, ButtonProps>(
+  ({ title, icon, valid = true, fontSize = 16, ...touchableProps }, ref) => {
+    const { colors } = useColorScheme();
+    return (
+      <TouchableOpacity
+        ref={ref}
+        {...touchableProps}
+        style={[
+          touchableProps.style,
+          {
+            alignItems: 'center',
+            backgroundColor: valid ? '#ffffff' : '#1081ddff',
+            borderRadius: 14,
+            elevation: 5,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            padding: 16,
+            shadowColor: '#000',
+            shadowOffset: {
+              height: 2,
+              width: 0,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+          },
+        ]}>
+        {icon && <Icon size={24} color={colors.foreground} source={icon} />}
+        <Text style={{ fontSize: fontSize }}>{title}</Text>
+      </TouchableOpacity>
+    );
+  }
+);
 
 Button.displayName = 'Button';
