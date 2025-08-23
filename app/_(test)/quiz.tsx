@@ -1,10 +1,9 @@
 import { View, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { getMCQForTest } from '~/lib/api';
-import { useTestStore } from '~/stores/test.store';
 import { ActivityIndicator, Icon, MD3DarkTheme, RadioButton } from 'react-native-paper';
 import { Button } from '~/components/Button';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -128,8 +127,6 @@ export default function Quiz() {
 
   useEffect(() => {
     if (remainingTime === 0) {
-      useTestStore.getState().stopTimer();
-
       // console.log('Time up, ending test automatically');
       handleEndTest();
     }
@@ -287,10 +284,16 @@ export default function Quiz() {
           </View>
 
           <View className="mx-1 mb-4 flex-row items-center justify-between">
-            <Button color="#fff" title="Previous" onPress={handlePrevious} />
-            <Button color="#fff" title="Clear" onPress={() => handleSelectOption('')} />
+            <Button textColor="black" color="#fff" title="Previous" onPress={handlePrevious} />
+            <Button
+              textColor="black"
+              color="#fff"
+              title="Clear"
+              onPress={() => handleSelectOption('')}
+            />
             <Button
               title={buttonText}
+              textColor="black"
               color="#fff"
               onPress={() => {
                 if (!isAnswered) {

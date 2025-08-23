@@ -13,7 +13,10 @@ type ButtonProps = {
 } & TouchableOpacityProps;
 
 export const Button = forwardRef<View, ButtonProps>(
-  ({ title, icon, textColor, color, valid = true, fontSize = 12, ...touchableProps }, ref) => {
+  (
+    { title, icon, color, textColor = 'white', valid = true, fontSize = 12, ...touchableProps },
+    ref
+  ) => {
     return (
       <TouchableOpacity
         ref={ref}

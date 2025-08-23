@@ -68,7 +68,8 @@
     "react-native-webview": "13.13.5",
     "tailwind-merge": "^2.2.1",
     "zustand": "^4.5.1",
-    "expo-application": "~6.1.5"
+    "expo-application": "~6.1.5",
+    "react-native-svg": "15.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

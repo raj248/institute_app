@@ -1,4 +1,4 @@
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const unstable_settings = {
   initialRouteName: '(home)',
@@ -8,7 +8,8 @@ export const unstable_settings = {
 import { Tabs, useSegments } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '~/lib/useColorScheme';
-import HeaderIcons from '~/components/HeaderIcons';
+
+import HomeIcon from '../assets/svg/home';
 
 export default function RootLayout() {
   const { colorScheme, isDarkColorScheme } = useColorScheme();
@@ -48,7 +49,8 @@ export default function RootLayout() {
         name="(home)"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />,
+          // tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <HomeIcon color={color} width={size} height={size} />,
           animation: 'shift',
           headerStyle: {
             backgroundColor: '#444',
