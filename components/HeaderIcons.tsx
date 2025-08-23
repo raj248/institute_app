@@ -9,8 +9,8 @@ export default function HeaderIcons() {
   const { colors } = useColorScheme();
 
   return (
-    <View className="flex flex-row items-center space-x-3 pr-3 gap-2">
-      <ThemeToggleSwitch />
+    <View className="flex flex-row items-center gap-2 space-x-3 pr-3">
+      {/* <ThemeToggleSwitch /> */}
       {/* <Link href="/notifications" asChild>
         <Pressable className="opacity-80">
           {({ pressed }) => (
@@ -32,4 +32,3 @@ export default function HeaderIcons() {
     </View>
   );
 }
-

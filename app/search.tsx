@@ -40,9 +40,21 @@ export default function SearchTab() {
     if (res.success && res.data) {
       const flatResults: FlatItem[] = [
         // ...res.data.topics.map((item) => ({ id: item.id, title: item.name, type: 'Topic' as 'Topic' | 'TestPaper' | 'Note' | 'VideoNote' })),
-        ...res.data.testPapers.map((item) => ({ id: item.topicId, title: item.name, type: 'TestPaper' as 'Topic' | 'TestPaper' | 'Note' | 'VideoNote' })),
-        ...res.data.notes.map((item) => ({ id: item.fileUrl, title: item.name, type: 'Note' as 'Topic' | 'TestPaper' | 'Note' | 'VideoNote' })),
-        ...res.data.videoNotes.map((item) => ({ id: item.url, title: item.name, type: 'VideoNote' as 'Topic' | 'TestPaper' | 'Note' | 'VideoNote' })),
+        ...res.data.testPapers.map((item) => ({
+          id: item.topicId,
+          title: item.name,
+          type: 'TestPaper' as 'Topic' | 'TestPaper' | 'Note' | 'VideoNote',
+        })),
+        ...res.data.notes.map((item) => ({
+          id: item.fileUrl,
+          title: item.name,
+          type: 'Note' as 'Topic' | 'TestPaper' | 'Note' | 'VideoNote',
+        })),
+        ...res.data.videoNotes.map((item) => ({
+          id: item.url,
+          title: item.name,
+          type: 'VideoNote' as 'Topic' | 'TestPaper' | 'Note' | 'VideoNote',
+        })),
       ];
       setResults(flatResults);
     } else {
@@ -56,8 +68,7 @@ export default function SearchTab() {
         flex: 1,
         backgroundColor: colors.background,
         padding: 16,
-      }}
-    >
+      }}>
       <Text variant="largeTitle" className="pb-4">
         Search
       </Text>
@@ -84,7 +95,7 @@ export default function SearchTab() {
           <TouchableOpacity
             style={{
               padding: 12,
-              borderBottomColor: colors.grey,
+              borderBottomColor: '#c7c7c7',
               borderBottomWidth: 0.5,
             }}
             onPress={() => {
@@ -95,14 +106,19 @@ export default function SearchTab() {
               } else if (item.type === 'Note') {
                 // Handle navigation for Note
                 console.log(`Navigating to Note: ${item.title} (ID: ${item.id})`);
-                router.push({ pathname: '/(home)/pdfviewer', params: { url: item.id, name: item.title } });
+                router.push({
+                  pathname: '/(home)/pdfviewer',
+                  params: { url: item.id, name: item.title },
+                });
               } else if (item.type === 'VideoNote') {
                 // Handle navigation for VideoNote
                 console.log(`Navigating to VideoNote: ${item.title} (ID: ${item.id})`);
-                router.push({ pathname: '/_(test)/videoplayer', params: { url: item.id, title: item.title } });
+                router.push({
+                  pathname: '/_(test)/videoplayer',
+                  params: { url: item.id, title: item.title },
+                });
               }
-            }}
-          >
+            }}>
             <Text className="font-medium">{item.title}</Text>
             <Text className="text-xs text-gray-500">{item.type}</Text>
           </TouchableOpacity>

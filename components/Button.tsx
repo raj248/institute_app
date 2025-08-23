@@ -24,17 +24,10 @@ export const Button = forwardRef<View, ButtonProps>(
             alignItems: 'center',
             backgroundColor: valid ? '#ffffff' : '#1081ddff',
             borderRadius: 14,
-            elevation: 5,
+            elevation: 2,
             flexDirection: 'row',
             justifyContent: 'center',
             padding: 16,
-            shadowColor: '#000',
-            shadowOffset: {
-              height: 2,
-              width: 0,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
           },
         ]}>
         {icon && <Icon size={24} color={colors.foreground} source={icon} />}

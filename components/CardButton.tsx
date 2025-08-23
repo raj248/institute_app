@@ -10,29 +10,33 @@ interface CardButtonProps {
   onPress: () => void;
 }
 
-export const CardButton: React.FC<CardButtonProps> = ({
-  icon,
-  title,
-  description,
-  onPress
-}) => {
+export const CardButton: React.FC<CardButtonProps> = ({ icon, title, description, onPress }) => {
   const { isDarkColorScheme } = useColorScheme();
 
   return (
     <Pressable
       onPress={onPress}
       className={cn(
-        'rounded-xl p-4 items-center justify-center flex-1',
+        'flex-1 items-center justify-center rounded-xl p-4',
         'shadow-md dark:shadow-lg',
         isDarkColorScheme ? 'bg-gray-800' : 'bg-white'
       )}
-      android_ripple={{ color: isDarkColorScheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
-    >
-      <Image source={icon} className="w-16 h-16 mb-2" resizeMode="contain" />
-      <Text className={cn('text-center font-semibold text-base', isDarkColorScheme ? 'text-white' : 'text-gray-800')}>
+      android_ripple={{ color: isDarkColorScheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}>
+      <Image source={icon} className="mb-2 h-16 w-16" resizeMode="contain" />
+      <Text
+        className={cn(
+          'text-center text-base font-semibold',
+          isDarkColorScheme ? 'text-white' : 'text-gray-800'
+        )}
+        style={{ fontSize: 18 }}>
         {title}
       </Text>
-      <Text className={cn('text-center text-xs mt-1', isDarkColorScheme ? 'text-gray-300' : 'text-gray-500')}>
+      <Text
+        className={cn(
+          'mt-1 text-center text-xs',
+          isDarkColorScheme ? 'text-gray-300' : 'text-gray-500'
+        )}
+        style={{ fontSize: 14 }}>
         {description}
       </Text>
     </Pressable>
