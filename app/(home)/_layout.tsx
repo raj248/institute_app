@@ -41,7 +41,6 @@ export default function RootLayout() {
     presentation: 'modal',
     animation: 'fade_from_bottom',
     title: 'Settings',
-    headerRight: () => <ThemeToggle />,
   } as const;
 
   const INDEX_OPTIONS = {

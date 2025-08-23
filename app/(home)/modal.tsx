@@ -1,32 +1,65 @@
-import { Icon } from '@roninoss/icons';
-import { StatusBar } from 'expo-status-bar';
-import { Platform, View } from 'react-native';
-
+import { FlatList, Linking, Pressable, View } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
-import { useColorScheme } from '~/lib/useColorScheme';
+import { useEffect, useState } from 'react';
+import * as Application from 'expo-application';
+import { getStoredUserId } from '~/utils/device-info';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function ModalScreen() {
-  const { colors, colorScheme } = useColorScheme();
+const items = [
+  { label: 'Contact Us', url: 'mailto:support@example.com' },
+  { label: 'Rate Us', url: 'https://play.google.com/store/apps/details?id=com.example.app' },
+  { label: 'FAQ', url: 'https://example.com/faq' },
+  { label: 'Privacy Policy', url: 'https://example.com/privacy' },
+  { label: 'Your ID', isStatic: true },
+  { label: 'App Version', isStatic: true },
+];
+
+export default function Settings() {
+  const [guestId, setGuestId] = useState<string>('');
+  const [appVersion, setAppVersion] = useState<string>('');
+
+  useEffect(() => {
+    getStoredUserId().then((id) => setGuestId(id ?? 'Loading...'));
+    setAppVersion(Application.nativeApplicationVersion ?? '1.0.0');
+  }, []);
 
   return (
-    <>
-      <StatusBar
-        style={Platform.OS === 'ios' ? 'light' : colorScheme === 'dark' ? 'light' : 'dark'}
-        animated={true}
-        backgroundColor={colors.background}
+    <SafeAreaView className="flex-1 p-6">
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.label}
+        ItemSeparatorComponent={() => <View className="h-3" />}
+        renderItem={({ item }) => {
+          const containerStyles = 'rounded-lg border border-gray-300 p-4 bg-white';
+
+          if (item.label === 'Your ID') {
+            return (
+              <View className="mt-1 px-4">
+                <Text className="text-base font-semibold">{item.label}</Text>
+                <Text className="mt-1 text-sm text-gray-600">{guestId}</Text>
+              </View>
+            );
+          }
+
+          if (item.label === 'App Version') {
+            return (
+              <View className="mt-1 px-4">
+                <Text className="text-base font-semibold">{item.label}</Text>
+                <Text className="mt-1 text-sm text-gray-600">{appVersion}</Text>
+              </View>
+            );
+          }
+
+          return (
+            <Pressable
+              onPress={() => Linking.openURL(item.url ?? '')}
+              className={containerStyles}
+              style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}>
+              <Text className="text-base font-semibold text-blue-600">{item.label}</Text>
+            </Pressable>
+          );
+        }}
       />
-      <View className="flex-1 items-center justify-center gap-2 px-12">
-        <Icon name="cog-outline" size={42} color={colors.grey} />
-        <Text variant="title3" className="pb-1 text-center font-semibold">
-          Settings
-        </Text>
-        <Text color="tertiary" variant="subhead" className="text-center">
-          All your app settings will appear here.
-        </Text>
-        <Text color="tertiary" variant="subhead" className="text-center">
-          Customize your experience and manage preferences easily.
-        </Text>
-      </View>
-    </>
+    </SafeAreaView>
   );
 }

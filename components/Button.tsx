@@ -9,10 +9,11 @@ type ButtonProps = {
   valid?: boolean;
   fontSize?: number;
   color?: string;
+  textColor?: string;
 } & TouchableOpacityProps;
 
 export const Button = forwardRef<View, ButtonProps>(
-  ({ title, icon, color, valid = true, fontSize = 12, ...touchableProps }, ref) => {
+  ({ title, icon, textColor, color, valid = true, fontSize = 12, ...touchableProps }, ref) => {
     return (
       <TouchableOpacity
         ref={ref}
@@ -30,7 +31,7 @@ export const Button = forwardRef<View, ButtonProps>(
           },
         ]}>
         {icon && <Icon size={24} color="white" source={icon} />}
-        <Text className="ml-2" style={{ fontSize: fontSize, color: 'white' }}>
+        <Text className="ml-2 text-center" style={{ fontSize: fontSize, color: textColor }}>
           {title}
         </Text>
       </TouchableOpacity>

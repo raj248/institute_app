@@ -115,6 +115,10 @@ export default function Quiz() {
   };
   const handleEndTest = () => {
     stopTimer();
+    // setTestData(undefined);
+    setCurrentIndex(0);
+    setCurrentQuestion(testData?.mcqs?.[0]);
+    setAnswer({});
     // router.replace('./testresultpage');
     router.back();
   };
@@ -188,12 +192,6 @@ export default function Quiz() {
       </SafeAreaView>
     );
   }
-
-  const selection = { 0: 'A', 1: 'B', 2: 'C', 3: 'D' };
-  const setSelection = (index: number) => {
-    if (!currentQuestion) return;
-    // setAnswer({ ...answers, [currentQuestion.id]: selection[index] });
-  };
 
   return (
     <PaperProvider>
@@ -289,11 +287,11 @@ export default function Quiz() {
           </View>
 
           <View className="mx-1 mb-4 flex-row items-center justify-between">
-            <Button title="Previous" onPress={handlePrevious} icon="arrow-left" />
-            <Button title="Clear" onPress={() => handleSelectOption('')} />
+            <Button color="#fff" title="Previous" onPress={handlePrevious} />
+            <Button color="#fff" title="Clear" onPress={() => handleSelectOption('')} />
             <Button
               title={buttonText}
-              icon="arrow-right"
+              color="#fff"
               onPress={() => {
                 if (!isAnswered) {
                   // maybe show a toast or validation
