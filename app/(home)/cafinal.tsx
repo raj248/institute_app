@@ -72,7 +72,10 @@ const CAFinalScreen = () => {
   }, [height, width, insets, numColumns]);
 
   return (
-    <>
+    <View
+      style={{
+        backgroundColor: '#fbfbfb',
+      }}>
       <Stack.Screen
         options={{
           title: 'CA Final',
@@ -85,10 +88,11 @@ const CAFinalScreen = () => {
         numColumns={numColumns}
         key={numColumns}
         contentContainerStyle={{
-          backgroundColor: colors.background,
+          backgroundColor: '#fbfbfb',
         }}
         renderItem={({ item }) => (
-          <View style={{ flex: 1, margin: 8, height: ITEM_HEIGHT }}>
+          <View
+            style={{ flex: 1, margin: 8, height: ITEM_HEIGHT, backgroundColor: colors.background }}>
             <CardButton
               icon={item.icon}
               title={item.title}
@@ -101,7 +105,7 @@ const CAFinalScreen = () => {
           </View>
         )}
       />
-    </>
+    </View>
   );
 };
 
