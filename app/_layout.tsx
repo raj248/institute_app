@@ -50,7 +50,9 @@ export default function RootLayout() {
         options={{
           title: 'Home',
           // tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />,
-          tabBarIcon: ({ color, size }) => <HomeIcon color={color} width={size} height={size} />,
+          tabBarIcon: ({ color, size, focused }) => (
+            <HomeIcon color={color} width={size} height={size} focused={focused} />
+          ),
           animation: 'shift',
           headerStyle: {
             backgroundColor: '#444',
