@@ -67,7 +67,7 @@ const CAInterScreen = () => {
 
   const ITEM_HEIGHT = useMemo(() => {
     // Total vertical padding/margin: safe areas + top bar + inter-item gaps
-    const verticalPadding = insets.top + insets.bottom + 50; // adjust if header is larger
+    const verticalPadding = insets.top + insets.bottom + 65; // adjust if header is larger
     const rows = Math.ceil(data.length / numColumns);
     return (height - verticalPadding) / rows - 16; // 16 for inter-row margin
   }, [height, width, insets, numColumns]);

@@ -66,7 +66,7 @@ const CAFinalScreen = () => {
   const numColumns = isLandscape ? 3 : 2;
 
   const ITEM_HEIGHT = useMemo(() => {
-    const verticalPadding = insets.top + insets.bottom + 50; // adjust if needed
+    const verticalPadding = insets.top + insets.bottom + 65; // adjust if needed
     const rows = Math.ceil(data.length / numColumns);
     return (height - verticalPadding) / rows - 16;
   }, [height, width, insets, numColumns]);
