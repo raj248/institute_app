@@ -5,7 +5,7 @@ interface IconProps extends SvgProps {
   focused?: boolean;
 }
 
-const HomeIcon = React.forwardRef<Svg, IconProps>(({ focused = false, ...props }, ref) => {
+const Icon = React.forwardRef<Svg, IconProps>(({ focused = false, ...props }, ref) => {
   return (
     <Svg width={1024} height={1024} viewBox="0 0 768 768" ref={ref} {...props}>
       <Defs>
@@ -24,4 +24,4 @@ const HomeIcon = React.forwardRef<Svg, IconProps>(({ focused = false, ...props }
   );
 });
 
-export default HomeIcon;
+export default Icon;

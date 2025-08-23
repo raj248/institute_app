@@ -3,8 +3,8 @@ import { Pressable, View } from 'react-native';
 import { Link } from 'expo-router';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { cn } from '~/lib/cn';
-import { ThemeToggleSwitch } from './ThemeToggleSwitch';
 
+import SettingIcon from '../assets/svg/setting';
 export default function HeaderIcons() {
   const { colors } = useColorScheme();
 
@@ -24,7 +24,8 @@ export default function HeaderIcons() {
         <Pressable className="opacity-80">
           {({ pressed }) => (
             <View className={cn(pressed ? 'opacity-50' : 'opacity-90')}>
-              <Icon name="cog-outline" size={26} color={colors.foreground} />
+              <SettingIcon width={26} height={26} color={colors.foreground} />
+              {/* <Icon name="cog-outline" size={26} color={colors.foreground} /> */}
             </View>
           )}
         </Pressable>
