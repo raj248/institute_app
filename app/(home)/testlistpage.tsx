@@ -10,7 +10,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import TestBottomSheet from '~/components/TestBottomSheet';
 
 export default function TestListPage() {
-  const [openSheet, setOpenSheet] = useState(() => () => { });
+  const [openSheet, setOpenSheet] = useState(() => () => {});
   const { topicId } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
   const [refreshing, setRefreshing] = useState(false);
@@ -58,12 +58,20 @@ export default function TestListPage() {
   const [query, setQuery] = useState('');
   const [selectedTest, setSelectedTest] = useState<TestPaper | null>(null);
 
-  const topicTests = testPapers?.filter(test => test.topicId === topicId);
+  useEffect(() => {
+    if (selectedTest && openSheet) {
+      openSheet(); // guaranteed to exist by now
+    }
+  }, [selectedTest, openSheet]);
+
+  const topicTests = testPapers?.filter((test) => test.topicId === topicId);
 
   const filteredData = query
-    ? fuse.search(query).map(res => res.item).filter(test => test.topicId === topicId)
+    ? fuse
+        .search(query)
+        .map((res) => res.item)
+        .filter((test) => test.topicId === topicId)
     : topicTests;
-
 
   const renderItem = ({ item }: { item: TestPaper }) => (
     <TouchableOpacity
@@ -81,14 +89,23 @@ export default function TestListPage() {
       }}
       onPress={() => {
         setSelectedTest(item);
-        openSheet();
-      }}
-    >
+        // openSheet();
+      }}>
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
-      <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>{item.description}</Text>
-      <View className='flex-row justify-between items-center'>
-        <Text style={{ fontSize: 12, color: isDarkColorScheme ? '#aaa' : '#888' }}>{`${item.mcqCount} Questions`}</Text>
-        <Text style={{ fontSize: 12, color: isDarkColorScheme ? '#aaa' : '#888' }}>{`${item.totalMarks} Marks`}</Text>
+      <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
+        {item.description}
+      </Text>
+      <View className="flex-row items-center justify-between">
+        <Text
+          style={{
+            fontSize: 12,
+            color: isDarkColorScheme ? '#aaa' : '#888',
+          }}>{`${item.mcqCount} Questions`}</Text>
+        <Text
+          style={{
+            fontSize: 12,
+            color: isDarkColorScheme ? '#aaa' : '#888',
+          }}>{`${item.totalMarks} Marks`}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -141,9 +158,7 @@ export default function TestListPage() {
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: 16 }}
       />
-      {selectedTest && (
-        <TestBottomSheet test={selectedTest} setOpenSheet={setOpenSheet} />
-      )}
+      {selectedTest && <TestBottomSheet test={selectedTest} setOpenSheet={setOpenSheet} />}
     </View>
   );
 }

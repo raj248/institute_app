@@ -17,7 +17,6 @@ export default function HomeTabIndex() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-
   const handler = async () => {
     const user = await register(Number(phoneNumber));
     if (user.success && user.data) {
@@ -27,7 +26,7 @@ export default function HomeTabIndex() {
       console.error('Error registering user:', user.error);
       setError('Error registering user. Please try again. ' + user.error);
     }
-  }
+  };
 
   return (
     <View
@@ -37,23 +36,22 @@ export default function HomeTabIndex() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 24,
-      }}
-    >
+      }}>
       <Stack.Screen options={{ headerShown: false }} />
       <Image
         source={require('~/assets/icon.png')}
         style={{ width: 150, height: 150, marginBottom: 24 }}
-        resizeMode='contain'
+        resizeMode="contain"
       />
       <Text variant="largeTitle" className="pb-4 text-center">
         PJ Classes
       </Text>
 
-      <Text variant="title3" className="text-center pb-2">
+      <Text variant="title3" className="pb-2 text-center">
         Welcome to your learning dashboard
       </Text>
 
-      <Text variant="subhead" className="text-center pb-8">
+      <Text variant="subhead" className="pb-8 text-center">
         Enter your phone number to continue to your personalized learning dashboard.
       </Text>
 
@@ -67,14 +65,18 @@ export default function HomeTabIndex() {
         style={{ width: '100%' }}
         theme={isDarkColorScheme ? MD3DarkTheme : MD2LightTheme}
       />
-      {error && <Text variant="callout" className="text-center text-red-500 pt-4">{error}</Text>}
+      {error && (
+        <Text variant="callout" className="pt-4 text-center text-red-500">
+          {error}
+        </Text>
+      )}
       <Button
-        title='Get Started'
+        title="Get Started"
         onPress={handler}
-        icon='arrow-right'
+        icon="arrow-right"
         valid={phoneNumber.length < 10}
         disabled={phoneNumber.length < 10}
-        className='w-[80%] mt-8'
+        className="mt-8 w-[80%]"
       />
       {/* <ThemeToggleSwitch /> */}
     </View>
