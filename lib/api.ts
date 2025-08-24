@@ -8,15 +8,37 @@ import type {
   SearchResult,
 } from '~/types/entities';
 import type { APIResponse } from '~/types/api';
+import { getStoredUserId } from '~/utils/device-info';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_SERVER_URL;
 
 async function safeFetch<T>(
   url: string,
-  options?: RequestInit
+  options: RequestInit = {}
 ): Promise<{ success: boolean; error?: string; data?: T }> {
   console.log(`Fetching ${url}`);
   try {
+    const userId = await getStoredUserId();
+
+    // Append userId as query param if it's a GET request
+    if (options.method === undefined || options.method.toUpperCase() === "GET") {
+      const urlObj = new URL(url, window.location.origin);
+      if (userId) urlObj.searchParams.set("userId", userId);
+      url = urlObj.toString();
+    } else {
+      // For POST/PUT/etc, ensure body has userId
+      if (options.body) {
+        const body = JSON.parse(options.body as string);
+        options.body = JSON.stringify({ ...body, userId });
+      } else {
+        options.body = JSON.stringify({ userId });
+        options.headers = {
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
+        };
+      }
+    }
+
     const res = await fetch(url, options);
     const result = await res.json();
 
@@ -28,7 +50,7 @@ async function safeFetch<T>(
     return result;
   } catch (error) {
     console.error(`Fetch error (${url}):`, error);
-    return { success: false, error: (error as Error).message ?? 'Unknown error' };
+    return { success: false, error: (error as Error).message ?? "Unknown error" };
   }
 }
 
@@ -43,18 +65,6 @@ export async function registerUser(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userId, phoneNumber }),
   });
-}
-
-export async function updateLastActive(userId: string) {
-  return safeFetch<APIResponse<{ id: string; lastActiveAt: string }>>(
-    `${BASE_URL}/api/user/${userId}/last-active`,
-    {
-      method: 'PATCH',
-    }
-  );
-}
-export async function fetchActiveUserCount() {
-  return safeFetch<number>(`${BASE_URL}/api/user/active`);
 }
 
 // ------------------- Courses & Topics --------------------
