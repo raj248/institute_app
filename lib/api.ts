@@ -21,9 +21,9 @@ async function safeFetch<T>(
     const userId = await getStoredUserId();
 
     // Append userId as query param if it's a GET request
-    if (options.method === undefined || options.method.toUpperCase() === "GET") {
-      const urlObj = new URL(url, window.location.origin);
-      if (userId) urlObj.searchParams.set("userId", userId);
+    if (options.method === undefined || options.method.toUpperCase() === 'GET') {
+      const urlObj = new URL(url, BASE_URL);
+      if (userId) urlObj.searchParams.set('userId', userId);
       url = urlObj.toString();
     } else {
       // For POST/PUT/etc, ensure body has userId
@@ -33,7 +33,7 @@ async function safeFetch<T>(
       } else {
         options.body = JSON.stringify({ userId });
         options.headers = {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...(options.headers || {}),
         };
       }
@@ -50,7 +50,7 @@ async function safeFetch<T>(
     return result;
   } catch (error) {
     console.error(`Fetch error (${url}):`, error);
-    return { success: false, error: (error as Error).message ?? "Unknown error" };
+    return { success: false, error: (error as Error).message ?? 'Unknown error' };
   }
 }
 
