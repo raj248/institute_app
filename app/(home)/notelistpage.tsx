@@ -33,6 +33,7 @@ export default function NotesPage() {
       const res = await getNotesByTopic(topicId as string, type as string);
       if (res.error) setError(res.error);
       setNotes(res.data ?? []);
+      console.log(res.data);
     } catch (err) {
       console.error(err);
       setError('Failed to load notes. Please check your connection and try again.');
@@ -52,7 +53,7 @@ export default function NotesPage() {
   });
 
   const [query, setQuery] = useState('');
-  const filteredData = query ? fuse.search(query).map((res) => res.item) : notes ?? [];
+  const filteredData = query ? fuse.search(query).map((res) => res.item) : (notes ?? []);
 
   const renderItem = ({ item }: { item: Note }) => (
     <TouchableOpacity
@@ -68,8 +69,9 @@ export default function NotesPage() {
         shadowRadius: 4,
         elevation: 3,
       }}
-      onPress={() => router.push({ pathname: './pdfviewer', params: { url: item.fileUrl, name: item.name } })}
-    >
+      onPress={() =>
+        router.push({ pathname: './pdfviewer', params: { url: item.fileUrl, name: item.name } })
+      }>
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
       {item.description && (
         <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
@@ -81,8 +83,7 @@ export default function NotesPage() {
           fontSize: 12,
           color: isDarkColorScheme ? '#aaa' : '#888',
           textAlign: 'right',
-        }}
-      >
+        }}>
         {item.fileName} • {(item.fileSize / (1024 * 1024)).toFixed(2)} MB
       </Text>
     </TouchableOpacity>
@@ -91,7 +92,7 @@ export default function NotesPage() {
   if (!topicId) {
     return (
       <SafeAreaView>
-        <Text className="text-center p-4">Topic ID not found.</Text>
+        <Text className="p-4 text-center">Topic ID not found.</Text>
       </SafeAreaView>
     );
   }
@@ -135,7 +136,7 @@ export default function NotesPage() {
         </View>
       ) : error ? (
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-center mb-4">{error}</Text>
+          <Text className="mb-4 text-center">{error}</Text>
           <TouchableOpacity
             onPress={fetchNotes}
             style={{
@@ -143,9 +144,10 @@ export default function NotesPage() {
               paddingVertical: 10,
               paddingHorizontal: 20,
               borderRadius: 8,
-            }}
-          >
-            <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>Try Again</Text>
+            }}>
+            <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>
+              Try Again
+            </Text>
           </TouchableOpacity>
         </View>
       ) : (

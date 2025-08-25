@@ -55,60 +55,76 @@ export default function TopicListPage() {
   const [query, setQuery] = useState('');
   const filteredData = query ? fuse.search(query).map((res) => res.item) : (topics ?? []);
 
-  const renderItem = ({ item }: { item: Topic }) => (
-    <TouchableOpacity
-      style={{
-        backgroundColor: isDarkColorScheme ? '#222' : '#fff',
-        borderRadius: 10,
-        padding: 16,
-        marginVertical: 8,
-        marginHorizontal: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-      }}
-      onPress={() => {
-        if (pageType === 'mcq') {
-          router.push({ pathname: './testlistpage', params: { topicId: item.id } });
-        } else if (pageType === 'notes_mtp') {
-          router.push({ pathname: './notelistpage', params: { topicId: item.id, type: 'mtp' } });
-        } else if (pageType === 'notes_rtp') {
-          router.push({ pathname: './notelistpage', params: { topicId: item.id, type: 'rtp' } });
-        } else if (pageType === 'notes_other') {
-          router.push({ pathname: './notelistpage', params: { topicId: item.id, type: 'other' } });
-        } else if (pageType === 'mtp') {
-          router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'mtp' } });
-        } else if (pageType === 'rtp') {
-          router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'rtp' } });
-        } else if (pageType === 'revision') {
-          router.push({
-            pathname: './videolistpage',
-            params: { topicId: item.id, type: 'revision' },
-          });
-        } else {
-          router.push({ pathname: './+not-found' });
-        }
-      }}>
-      <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
-      <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
-        {item.description}
-      </Text>
-      <Text
+  const renderItem = ({ item }: { item: Topic }) => {
+    const count =
+      pageType === 'mcq'
+        ? item.testPaperCount
+        : (pageType as string)?.startsWith('notes_')
+          ? (item.noteCountByType?.[(pageType as string).replace('notes_', '')] ?? 0)
+          : (item.videoNoteCountByType?.[pageType as string] ?? 0);
+
+    if (count === 0) return null; // Don't render if count is 0
+
+    return (
+      <TouchableOpacity
         style={{
-          fontSize: 12,
-          color: isDarkColorScheme ? '#aaa' : '#888',
-          textAlign: 'right',
+          backgroundColor: isDarkColorScheme ? '#222' : '#fff',
+          borderRadius: 10,
+          padding: 16,
+          marginVertical: 8,
+          marginHorizontal: 16,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3,
+        }}
+        onPress={() => {
+          if (pageType === 'mcq') {
+            router.push({ pathname: './testlistpage', params: { topicId: item.id } });
+          } else if (pageType === 'notes_mtp') {
+            router.push({ pathname: './notelistpage', params: { topicId: item.id, type: 'mtp' } });
+          } else if (pageType === 'notes_rtp') {
+            router.push({ pathname: './notelistpage', params: { topicId: item.id, type: 'rtp' } });
+          } else if (pageType === 'notes_other') {
+            router.push({
+              pathname: './notelistpage',
+              params: { topicId: item.id, type: 'other' },
+            });
+          } else if (pageType === 'mtp') {
+            router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'mtp' } });
+          } else if (pageType === 'rtp') {
+            router.push({ pathname: './videolistpage', params: { topicId: item.id, type: 'rtp' } });
+          } else if (pageType === 'revision') {
+            router.push({
+              pathname: './videolistpage',
+              params: { topicId: item.id, type: 'revision' },
+            });
+          } else {
+            router.push({ pathname: './+not-found' });
+          }
         }}>
-        {pageType === 'mcq'
-          ? `${item.testPaperCount} Tests`
-          : (pageType as string)?.startsWith('notes_')
-            ? `${item.noteCountByType?.[(pageType as string).replace('notes_', '')] ?? 0} Notes`
-            : `${item.videoNoteCountByType?.[pageType as string] ?? 0} Videos`}
-      </Text>
-    </TouchableOpacity>
-  );
+        <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
+
+        <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
+          {item.description}
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 12,
+            color: isDarkColorScheme ? '#aaa' : '#888',
+            textAlign: 'right',
+          }}>
+          {pageType === 'mcq'
+            ? `${item.testPaperCount} Tests`
+            : (pageType as string)?.startsWith('notes_')
+              ? `${item.noteCountByType?.[(pageType as string).replace('notes_', '')] ?? 0} Notes`
+              : `${item.videoNoteCountByType?.[pageType as string] ?? 0} Videos`}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   if (!course)
     return (
