@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { Text } from '~/components/nativewindui/Text';
+import { cn } from '~/lib/cn';
 
 type ButtonProps = {
   title?: string;
@@ -34,7 +35,9 @@ export const Button = forwardRef<View, ButtonProps>(
           },
         ]}>
         {icon && <Icon size={24} color="white" source={icon} />}
-        <Text className="ml-2 text-center" style={{ fontSize: fontSize, color: textColor }}>
+        <Text
+          className={cn('text-center', icon ? 'ml-2' : '')}
+          style={{ fontSize: fontSize, color: textColor }}>
           {title}
         </Text>
       </TouchableOpacity>
