@@ -118,8 +118,8 @@ export default function Quiz() {
     setCurrentIndex(0);
     setCurrentQuestion(testData?.mcqs?.[0]);
     setAnswer({});
-    // router.replace('./testresultpage');
-    router.back();
+    router.push('/(home)');
+    router.dismissAll();
   };
   const currentOptions = useMemo(() => {
     return Object.entries(currentQuestion?.options ?? {});
