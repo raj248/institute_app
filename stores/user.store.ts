@@ -1,6 +1,7 @@
 // stores/useUserStore.ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface UserState {
   userId: string | null;
@@ -32,6 +33,7 @@ export const useUserStore = create<UserState>()(
     }),
     {
       name: 'user-storage', // localStorage/AsyncStorage key
+      storage: createJSONStorage(() => AsyncStorage), // (optional) by default, 'localStorage' is used
     }
   )
 );
