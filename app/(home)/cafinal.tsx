@@ -28,7 +28,7 @@ const data = [
     icon: require('~/assets/icons/rtp.png'),
     title: 'RTP',
     description: 'Revision Test Papers',
-    path: '/topiclistpage',
+    path: '/videolistpage',
     params: { course: 'CAFinal', pageType: 'rtp' },
   },
   {
@@ -36,7 +36,7 @@ const data = [
     icon: require('~/assets/icons/mtp.png'),
     title: 'MTP',
     description: 'Mock Test Papers + Video Notes',
-    path: '/topiclistpage',
+    path: '/videolistpage',
     params: { course: 'CAFinal', pageType: 'mtp' },
   },
   {

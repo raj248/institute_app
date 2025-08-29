@@ -127,6 +127,13 @@ export async function getVideoNotesByTopicId(
   return safeFetch(url);
 }
 
+export async function getVideoByCourse(
+  courseType: 'CAInter' | 'CAFinal',
+  type: 'all' | 'rtp' | 'mtp' | 'revision' | 'other'
+): Promise<APIResponse<VideoNote[]>> {
+  return safeFetch(`${BASE_URL}/api/videonotes/course/${courseType}?type=${type}`);
+}
+
 /**
  * Get a video by its ID
  */

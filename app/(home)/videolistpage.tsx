@@ -14,11 +14,11 @@ import Fuse from 'fuse.js';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { getVideoNotesByTopicId } from '~/lib/api';
+import { getVideoByCourse, getVideoNotesByTopicId } from '~/lib/api';
 import { VideoNote } from '~/types/entities';
 
 export default function VideoListPage() {
-  const { topicId, type } = useLocalSearchParams();
+  const { topicId, type, course } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
 
   const [videos, setVideos] = useState<VideoNote[]>([]);
@@ -36,18 +36,18 @@ export default function VideoListPage() {
     try {
       const updated = await Promise.all(
         videoNotes.map(async (video) => {
-          if (!video.url.includes("youtube.com") && !video.url.includes("youtu.be")) {
+          if (!video.url.includes('youtube.com') && !video.url.includes('youtu.be')) {
             return {
               ...video,
-              title: "Invalid YouTube URL",
-              thumbnail: "https://via.placeholder.com/320x180?text=Invalid+URL",
+              title: 'Invalid YouTube URL',
+              thumbnail: 'https://via.placeholder.com/320x180?text=Invalid+URL',
             };
           }
           try {
             const response = await fetch(
               `https://www.youtube.com/oembed?url=${encodeURIComponent(video.url)}&format=json`
             );
-            if (!response.ok) throw new Error("Failed to fetch video data");
+            if (!response.ok) throw new Error('Failed to fetch video data');
             const data = await response.json();
             return {
               ...video,
@@ -57,8 +57,8 @@ export default function VideoListPage() {
           } catch {
             return {
               ...video,
-              title: "Failed to fetch title",
-              thumbnail: "https://via.placeholder.com/320x180?text=Error",
+              title: 'Failed to fetch title',
+              thumbnail: 'https://via.placeholder.com/320x180?text=Error',
             };
           }
         })
@@ -71,10 +71,20 @@ export default function VideoListPage() {
   };
 
   const fetchVideos = async () => {
-    if (!topicId) return;
     setLoading(true);
     setError(null);
     try {
+      if (!topicId) {
+        const res = await getVideoByCourse(
+          course as 'CAInter' | 'CAFinal',
+          type as 'all' | 'rtp' | 'mtp' | 'revision' | 'other'
+        );
+        if (res.error) setError(res.error);
+        await fetchVideoDetails(res.data ?? []);
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
       const res = await getVideoNotesByTopicId(topicId as string, type as string);
       if (res.error) setError(res.error);
       else await fetchVideoDetails(res.data ?? []);
@@ -89,13 +99,13 @@ export default function VideoListPage() {
 
   useEffect(() => {
     fetchVideos();
-  }, [topicId]);
+  }, [topicId, type, course]);
 
   const fuse = new Fuse(videos ?? [], {
     keys: ['title'],
     threshold: 0.4,
   });
-  const filteredData = query ? fuse.search(query).map((res) => res.item) : videos ?? [];
+  const filteredData = query ? fuse.search(query).map((res) => res.item) : (videos ?? []);
 
   const renderItem = ({ item }: { item: VideoNote }) => (
     <TouchableOpacity
@@ -112,8 +122,12 @@ export default function VideoListPage() {
         elevation: 3,
         overflow: 'hidden',
       }}
-      onPress={() => router.push({ pathname: '../_(test)/videoplayer', params: { url: item.url, title: item.title ?? '' } })}
-    >
+      onPress={() =>
+        router.push({
+          pathname: '../_(test)/videoplayer',
+          params: { url: item.url, title: item.title ?? '' },
+        })
+      }>
       {item.thumbnail && (
         <Image
           source={{ uri: item.thumbnail }}
@@ -128,8 +142,7 @@ export default function VideoListPage() {
             fontSize: 12,
             color: isDarkColorScheme ? '#aaa' : '#888',
             marginTop: 4,
-          }}
-        >
+          }}>
           Tap to play on embedded player
         </Text>
       </View>
@@ -139,7 +152,7 @@ export default function VideoListPage() {
   if (!topicId) {
     return (
       <SafeAreaView>
-        <Text className="text-center p-4">Topic ID not found.</Text>
+        <Text className="p-4 text-center">Topic ID not found.</Text>
       </SafeAreaView>
     );
   }
@@ -183,7 +196,7 @@ export default function VideoListPage() {
         </View>
       ) : error ? (
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-center mb-4">{error}</Text>
+          <Text className="mb-4 text-center">{error}</Text>
           <TouchableOpacity
             onPress={fetchVideos}
             style={{
@@ -191,9 +204,10 @@ export default function VideoListPage() {
               paddingVertical: 10,
               paddingHorizontal: 20,
               borderRadius: 8,
-            }}
-          >
-            <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>Try Again</Text>
+            }}>
+            <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>
+              Try Again
+            </Text>
           </TouchableOpacity>
         </View>
       ) : (
