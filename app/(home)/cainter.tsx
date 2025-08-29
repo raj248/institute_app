@@ -29,7 +29,7 @@ const data = [
     title: 'RTP',
     description: 'Revision Test Papers',
     path: '/videolistpage',
-    params: { course: 'CAInter', pageType: 'rtp' },
+    params: { course: 'CAInter', type: 'rtp' },
   },
   {
     key: 'mtp',
@@ -37,7 +37,7 @@ const data = [
     title: 'MTP',
     description: 'Mock Test Papers + Video Notes',
     path: '/videolistpage',
-    params: { course: 'CAInter', pageType: 'mtp' },
+    params: { course: 'CAInter', type: 'mtp' },
   },
   {
     key: 'revision',

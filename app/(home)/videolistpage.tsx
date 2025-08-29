@@ -149,13 +149,13 @@ export default function VideoListPage() {
     </TouchableOpacity>
   );
 
-  if (!topicId) {
-    return (
-      <SafeAreaView>
-        <Text className="p-4 text-center">Topic ID not found.</Text>
-      </SafeAreaView>
-    );
-  }
+  // if (!topicId) {
+  //   return (
+  //     <SafeAreaView>
+  //       <Text className="p-4 text-center">Topic ID not found.</Text>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>

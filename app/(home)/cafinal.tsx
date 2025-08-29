@@ -29,7 +29,7 @@ const data = [
     title: 'RTP',
     description: 'Revision Test Papers',
     path: '/videolistpage',
-    params: { course: 'CAFinal', pageType: 'rtp' },
+    params: { course: 'CAFinal', type: 'rtp' },
   },
   {
     key: 'mtp',
@@ -37,7 +37,7 @@ const data = [
     title: 'MTP',
     description: 'Mock Test Papers + Video Notes',
     path: '/videolistpage',
-    params: { course: 'CAFinal', pageType: 'mtp' },
+    params: { course: 'CAFinal', type: 'mtp' },
   },
   {
     key: 'revision',
