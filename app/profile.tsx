@@ -9,7 +9,7 @@ export default function ProfileTab() {
   const userId = useUserStore.getState().userId;
   const phoneNumber = useUserStore.getState().phoneNumber;
 
-  const seed = 'user-123'; // e.g., your userId/phone
+  const seed = `${userId}-${phoneNumber}`; // e.g., your userId/phone
   const style = 'dylan'; // any style name from docs
   const size = 256;
   const uri = `https://api.dicebear.com/9.x/${style}/png?seed=${encodeURIComponent(userId || seed)}&size=${size}&radius=16`;
@@ -22,8 +22,7 @@ export default function ProfileTab() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 24,
-      }}
-    >
+      }}>
       <Image
         // source={{ uri: 'https://i.pravatar.cc/150?u=pj_clakdjfsss' }}
         source={{ uri: uri }}

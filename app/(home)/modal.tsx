@@ -6,10 +6,15 @@ import { getStoredUserId } from '~/utils/device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const items = [
-  { label: 'Contact Us', url: 'mailto:support@example.com' },
-  { label: 'Rate Us', url: 'https://play.google.com/store/apps/details?id=com.example.app' },
-  { label: 'FAQ', url: 'https://example.com/faq' },
-  { label: 'Privacy Policy', url: 'https://example.com/privacy' },
+  { label: 'Contact Us', url: 'https://www.caparveenjindal.com/contact-us' },
+  {
+    label: 'Rate Us',
+    url: 'https://play.google.com/store/apps/details?id=com.pjclasses.lms&reviewId=0',
+  },
+
+  // { label: 'Rate Us', url: 'market://details?id=com.pjclasses.lms&reviewId=0' },
+  // { label: 'FAQ', url: 'https://example.com/faq' },
+  { label: 'Privacy Policy', url: 'https://caparveenjindal.com/lms/privacy-policy/' },
   { label: 'Your ID', isStatic: true },
   { label: 'App Version', isStatic: true },
 ];
