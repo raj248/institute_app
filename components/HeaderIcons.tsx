@@ -11,7 +11,7 @@ export default function HeaderIcons() {
   return (
     <View className="flex flex-row items-center gap-2 space-x-3 pr-3">
       {/* <ThemeToggleSwitch /> */}
-      {/* <Link href="../_(test)/dashboard" asChild>
+      <Link href="../_(test)/dashboard" asChild>
         <Pressable className="opacity-80">
           {({ pressed }) => (
             <View className={cn(pressed ? 'opacity-50' : 'opacity-90')}>
@@ -19,7 +19,7 @@ export default function HeaderIcons() {
             </View>
           )}
         </Pressable>
-      </Link> */}
+      </Link>
       <Link href="/modal" asChild>
         <Pressable className="opacity-80">
           {({ pressed }) => (

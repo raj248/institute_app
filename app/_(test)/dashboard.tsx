@@ -38,7 +38,7 @@ export default function HomeTabIndex() {
       }}>
       <Stack.Screen options={{ headerShown: false }} />
       <Image
-        source={require('~/assets/icon.png')}
+        source={require('~/assets/dashboard-icon.png')}
         style={{ width: 150, height: 150, marginBottom: 24 }}
         resizeMode="contain"
       />

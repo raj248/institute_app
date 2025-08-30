@@ -34,7 +34,7 @@ const Home = () => {
       }}>
       {/* App Icon */}
       <Image
-        source={require('~/assets/icon.png')} // replace with your actual icon or placeholder
+        source={require('~/assets/dashboard-icon.png')} // replace with your actual icon or placeholder
         style={{ width: 150, height: 150, marginBottom: 24 }}
         resizeMode="contain"
       />

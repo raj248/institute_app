@@ -15,7 +15,7 @@ type ButtonProps = {
 
 export const Button = forwardRef<View, ButtonProps>(
   (
-    { title, icon, color, textColor = 'white', valid = true, fontSize = 12, ...touchableProps },
+    { title, icon, color, textColor = 'white', valid = false, fontSize = 18, ...touchableProps },
     ref
   ) => {
     return (
@@ -26,7 +26,7 @@ export const Button = forwardRef<View, ButtonProps>(
           touchableProps.style,
           {
             alignItems: 'center',
-            backgroundColor: color ? color : valid ? '#3f3d91' : '#74a4ccff',
+            backgroundColor: color ? color : valid ? '#ccc' : '#3f3d91',
             borderRadius: 14,
             elevation: 2,
             flexDirection: 'row',
