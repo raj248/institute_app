@@ -204,8 +204,11 @@ export default function Quiz() {
               alignItems: 'center',
               marginLeft: 16,
             }}>
-            <Icon size={20} source={'clock'} />{' '}
-            <Text variant="heading"> {formatTime(remainingTime ?? 0)}</Text>
+            <Icon size={20} source={'clock'} />
+            <Text variant="heading" style={{ marginLeft: 6 }}>
+              {' '}
+              {formatTime(remainingTime ?? 0)}
+            </Text>
           </View>
 
           <Pressable
@@ -238,7 +241,7 @@ export default function Quiz() {
               {currentOptions.map(([key, value]: [string, string]) => (
                 <RadioButton.Item
                   key={key}
-                  label={value}
+                  label={key.toUpperCase() + '. ' + value}
                   value={key}
                   style={{
                     backgroundColor: isDarkColorScheme ? '#222' : '#fff',
