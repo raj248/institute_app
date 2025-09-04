@@ -232,6 +232,24 @@ export default function Quiz() {
           className="mx-4 flex-1"
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
           <View className="flex flex-col justify-between gap-4">
+            {testData.isCaseStudy && (
+              <View
+                className="flex-1"
+                style={{
+                  backgroundColor: isDarkColorScheme ? '#222' : '#fff',
+                  borderWidth: 1,
+                  borderColor: isDarkColorScheme ? '#333' : '#eee',
+                  borderRadius: 8,
+                  padding: 16,
+                  marginBottom: 16,
+                }}>
+                <Text variant="subhead" className="mb-2 font-bold">
+                  Case Study:
+                </Text>
+                <Text variant="body">{testData.caseText}</Text>
+              </View>
+            )}
+
             <Text variant="title2">
               Q{currentIndex + 1}. {currentQuestion?.question}
             </Text>

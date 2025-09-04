@@ -44,6 +44,8 @@ export interface TestPaper {
   topic?: Topic;
   mcqCount?: number;
   mcqs?: MCQ[];
+  isCaseStudy?: boolean;
+  caseText?: string;
 }
 
 export interface MCQ {
