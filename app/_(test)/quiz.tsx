@@ -115,12 +115,23 @@ export default function Quiz() {
   const handleEndTest = () => {
     stopTimer();
     // setTestData(undefined);
+    const jsonAnswers = JSON.stringify(answers);
     setCurrentIndex(0);
-    setCurrentQuestion(testData?.mcqs?.[0]);
     setAnswer({});
-    router.push('/(home)');
-    router.dismissAll();
+    setCurrentQuestion(testData?.mcqs?.[0]);
+    setRemainingTime(0);
+
+    router.replace({
+      pathname: '/(home)/result',
+      params: { testId: testId, answers: jsonAnswers },
+    });
+
+    // working navigation below
+
+    // router.push('/(home)');
+    // router.dismissAll();
   };
+
   const currentOptions = useMemo(() => {
     return Object.entries(currentQuestion?.options ?? {});
   }, [currentQuestion]);
@@ -254,9 +265,12 @@ export default function Quiz() {
               Q{currentIndex + 1}. {currentQuestion?.question}
             </Text>
             <RadioButton.Group
-              onValueChange={(value) => setTempSelection(value)}
+              onValueChange={(value) => {
+                !isAnswered && setTempSelection(value);
+              }}
               value={tempSelection}>
               {currentOptions.map(([key, value]: [string, string]) => (
+                // prevented changing options when isAnswered is true
                 <RadioButton.Item
                   key={key}
                   label={key.toUpperCase() + '. ' + value}
