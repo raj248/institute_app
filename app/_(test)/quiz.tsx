@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, ScrollView, Pressable } from 'react-native';
+import { View, TouchableOpacity, Pressable } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import React, { useEffect, useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -11,6 +11,8 @@ import { MCQ, TestPaper } from '~/types/entities';
 import ConfirmExitDialog from '~/components/ConfirmDialog';
 
 import { Provider as PaperProvider } from 'react-native-paper';
+import CollapsiblePDFViewer from '~/components/CollapsiblePdfViewer';
+import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 export default function Quiz() {
   const navigation = useNavigation();
   const { colors, isDarkColorScheme } = useColorScheme();
@@ -120,6 +122,7 @@ export default function Quiz() {
     setAnswer({});
     setCurrentQuestion(testData?.mcqs?.[0]);
     setRemainingTime(0);
+    setTempSelection('');
 
     router.replace({
       pathname: '/(home)/result',
@@ -202,160 +205,166 @@ export default function Quiz() {
   }
 
   return (
-    <PaperProvider>
-      <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
-        <Stack.Screen
-          options={{ title: 'MCQ Test', animation: 'slide_from_right', headerShown: false }}
-        />
-        <View className="mx-1 mb-4 flex-row items-center justify-between">
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginLeft: 16,
-            }}>
-            <Icon size={20} source={'clock'} />
-            <Text variant="heading" style={{ marginLeft: 6 }}>
-              {' '}
-              {formatTime(remainingTime ?? 0)}
-            </Text>
+    <GestureHandlerRootView>
+      <PaperProvider>
+        <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
+          <Stack.Screen
+            options={{ title: 'MCQ Test', animation: 'slide_from_right', headerShown: false }}
+          />
+          <View className=" mx-1 mb-4 flex-row items-center justify-between">
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginLeft: 16,
+              }}>
+              <Icon size={20} source={'clock'} />
+              <Text variant="heading" style={{ marginLeft: 6 }}>
+                {' '}
+                {formatTime(remainingTime ?? 0)}
+              </Text>
+            </View>
+
+            <Pressable
+              onPress={() => {
+                // router.replace('/(home)');
+                // router.dismissAll();
+                setDialogVisible(true);
+              }}
+              style={{
+                backgroundColor: '#ddd',
+                paddingVertical: 10,
+                paddingHorizontal: 8,
+                borderRadius: 8,
+                marginRight: 16,
+              }}>
+              <Icon size={20} color="red" source={'exit-to-app'} />
+            </Pressable>
           </View>
 
-          <Pressable
-            onPress={() => {
-              // router.replace('/(home)');
-              // router.dismissAll();
-              setDialogVisible(true);
-            }}
-            style={{
-              backgroundColor: '#ddd',
-              paddingVertical: 10,
-              paddingHorizontal: 8,
-              borderRadius: 8,
-              marginRight: 16,
-            }}>
-            <Icon size={20} color="red" source={'exit-to-app'} />
-          </Pressable>
-        </View>
-
-        <ScrollView
-          className="mx-4 flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
-          <View className="flex flex-col justify-between gap-4">
-            {testData.isCaseStudy && (
-              <View
-                className="flex-1"
-                style={{
-                  backgroundColor: isDarkColorScheme ? '#222' : '#fff',
-                  borderWidth: 1,
-                  borderColor: isDarkColorScheme ? '#333' : '#eee',
-                  borderRadius: 8,
-                  padding: 16,
-                  marginBottom: 16,
-                }}>
-                <Text variant="subhead" className="mb-2 font-bold">
-                  Case Study:
-                </Text>
-                <Text variant="body">{testData.caseText}</Text>
-              </View>
-            )}
-
-            <Text variant="title2">
-              Q{currentIndex + 1}. {currentQuestion?.question}
-            </Text>
-            <RadioButton.Group
-              onValueChange={(value) => {
-                !isAnswered && setTempSelection(value);
-              }}
-              value={tempSelection}>
-              {currentOptions.map(([key, value]: [string, string]) => (
-                // prevented changing options when isAnswered is true
-                <RadioButton.Item
-                  key={key}
-                  label={key.toUpperCase() + '. ' + value}
-                  value={key}
+          {/* if notepath available, show a view Case Study button, that will open a pdfviewer */}
+          {testData.notePath && (
+            <CollapsiblePDFViewer url={testData.notePath} title={'Show Case Study'} />
+          )}
+          <ScrollView
+            className="mx-4 flex-1"
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
+            <View className="flex flex-col justify-between gap-4">
+              {testData.isCaseStudy && testData.caseText && (
+                <View
+                  className="flex-1"
                   style={{
                     backgroundColor: isDarkColorScheme ? '#222' : '#fff',
-                    marginTop: 5,
+                    borderWidth: 1,
+                    borderColor: isDarkColorScheme ? '#333' : '#eee',
                     borderRadius: 8,
-                  }}
-                  theme={isDarkColorScheme ? MD3DarkTheme : undefined}
-                  rippleColor="transparent"
-                />
-              ))}
-            </RadioButton.Group>
-            {isAnswered && (
-              <View
-                className="flex-1"
-                style={{
-                  backgroundColor:
-                    currentQuestion &&
-                    currentQuestion?.correctAnswer === answers[currentQuestion.id]
-                      ? '#dbffe3ff'
-                      : '#f7d6d6ff',
-                  borderWidth: 1,
-                  borderColor:
-                    currentQuestion &&
-                    currentQuestion?.correctAnswer === answers[currentQuestion.id]
-                      ? '#5fe47cff'
-                      : '#fd7777ff',
-                  borderRadius: 8,
-                  padding: 16,
-                  marginTop: 16,
-                }}>
-                <Text variant="heading">
-                  Correct Answer: {currentQuestion?.correctAnswer.toUpperCase()}
-                </Text>
+                    padding: 16,
+                    marginBottom: 16,
+                  }}>
+                  <Text variant="subhead" className="mb-2 font-bold">
+                    Case Study:
+                  </Text>
+                  <Text variant="body">{testData.caseText}</Text>
+                </View>
+              )}
 
-                <Text variant="caption1" className="mt-2">
-                  <Text className="font-bold" variant={'caption1'}>
-                    Explanation:
-                  </Text>{' '}
-                  {currentQuestion?.explanation}
-                </Text>
-              </View>
-            )}
-          </View>
+              <Text variant="title2">
+                Q{currentIndex + 1}. {currentQuestion?.question}
+              </Text>
+              <RadioButton.Group
+                onValueChange={(value) => {
+                  !isAnswered && setTempSelection(value);
+                }}
+                value={tempSelection}>
+                {currentOptions.map(([key, value]: [string, string]) => (
+                  // prevented changing options when isAnswered is true
+                  <RadioButton.Item
+                    key={key}
+                    label={key.toUpperCase() + '. ' + value}
+                    value={key}
+                    style={{
+                      backgroundColor: isDarkColorScheme ? '#222' : '#fff',
+                      marginTop: 5,
+                      borderRadius: 8,
+                    }}
+                    theme={isDarkColorScheme ? MD3DarkTheme : undefined}
+                    rippleColor="transparent"
+                  />
+                ))}
+              </RadioButton.Group>
+              {isAnswered && (
+                <View
+                  className="flex-1"
+                  style={{
+                    backgroundColor:
+                      currentQuestion &&
+                      currentQuestion?.correctAnswer === answers[currentQuestion.id]
+                        ? '#dbffe3ff'
+                        : '#f7d6d6ff',
+                    borderWidth: 1,
+                    borderColor:
+                      currentQuestion &&
+                      currentQuestion?.correctAnswer === answers[currentQuestion.id]
+                        ? '#5fe47cff'
+                        : '#fd7777ff',
+                    borderRadius: 8,
+                    padding: 16,
+                    marginTop: 16,
+                  }}>
+                  <Text variant="heading">
+                    Correct Answer: {currentQuestion?.correctAnswer.toUpperCase()}
+                  </Text>
 
-          <View className="mx-1 mb-4 flex-row items-center justify-between">
-            <Button textColor="black" color="#fff" title="Previous" onPress={handlePrevious} />
-            <Button
-              textColor="black"
-              color="#fff"
-              title="Clear"
-              onPress={() => handleSelectOption('')}
+                  <Text variant="caption1" className="mt-2">
+                    <Text className="font-bold" variant={'caption1'}>
+                      Explanation:
+                    </Text>{' '}
+                    {currentQuestion?.explanation}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <View className="mx-1 mb-4 flex-row items-center justify-between">
+              <Button textColor="black" color="#fff" title="Previous" onPress={handlePrevious} />
+              <Button
+                textColor="black"
+                color="#fff"
+                title="Clear"
+                onPress={() => handleSelectOption('')}
+              />
+              <Button
+                title={buttonText}
+                textColor="black"
+                color="#fff"
+                onPress={() => {
+                  if (!isAnswered) {
+                    // maybe show a toast or validation
+                    handleSubmit();
+                    return;
+                  }
+
+                  if (isLastQuestion) {
+                    // end test
+                    // stopTimer();
+                    handleEndTest();
+                  } else {
+                    // go to next
+                    // setCurrentIndex((prev) => prev + 1);
+                    handleNext();
+                  }
+                }}
+              />
+            </View>
+            <ConfirmExitDialog
+              visible={dialogVisible}
+              onDismiss={() => setDialogVisible(false)}
+              onConfirm={handleEndTest}
             />
-            <Button
-              title={buttonText}
-              textColor="black"
-              color="#fff"
-              onPress={() => {
-                if (!isAnswered) {
-                  // maybe show a toast or validation
-                  handleSubmit();
-                  return;
-                }
-
-                if (isLastQuestion) {
-                  // end test
-                  // stopTimer();
-                  handleEndTest();
-                } else {
-                  // go to next
-                  // setCurrentIndex((prev) => prev + 1);
-                  handleNext();
-                }
-              }}
-            />
-          </View>
-          <ConfirmExitDialog
-            visible={dialogVisible}
-            onDismiss={() => setDialogVisible(false)}
-            onConfirm={handleEndTest}
-          />
-        </ScrollView>
-      </SafeAreaView>
-    </PaperProvider>
+          </ScrollView>
+        </SafeAreaView>
+      </PaperProvider>
+    </GestureHandlerRootView>
   );
 }

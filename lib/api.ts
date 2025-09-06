@@ -103,11 +103,11 @@ export async function getAnswersForTestPaper(
 
 // -------------------- Notes --------------------
 
-export async function getNotesByTopic(
-  topicId: string,
-  type: string = 'all'
+export async function getNotesByCourse(
+  courseType: 'CAInter' | 'CAFinal',
+  type: 'all' | 'rtp' | 'mtp' | 'other'
 ): Promise<APIResponse<Note[]>> {
-  return safeFetch(`${BASE_URL}/api/notes/topic/${topicId}?type=${encodeURIComponent(type)}`);
+  return safeFetch(`${BASE_URL}/api/notes/course/${courseType}?type=${type}`);
 }
 
 /**

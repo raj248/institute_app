@@ -46,13 +46,13 @@ export interface TestPaper {
   mcqs?: MCQ[];
   isCaseStudy?: boolean;
   caseText?: string;
+  notePath?: string;
 }
 
 export interface MCQ {
   id: string;
   question: string;
   options: Record<string, string>;
-  marks: number; // @DEPRECATED
   correctAnswer: 'a' | 'b' | 'c' | 'd';
   explanation: string;
 }
@@ -68,7 +68,6 @@ export interface Note {
   name: string;
   description?: string;
   type: 'rtp' | 'mtp' | 'other'; // added as per schema
-  topicId: string;
   courseType: 'CAInter' | 'CAFinal';
   fileName: string;
   fileUrl: string;

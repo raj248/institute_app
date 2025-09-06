@@ -13,11 +13,11 @@ import Fuse from 'fuse.js';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { getNotesByTopic } from '~/lib/api';
+import { getNotesByCourse } from '~/lib/api';
 import { Note } from '~/types/entities';
 
 export default function NotesPage() {
-  const { topicId, type } = useLocalSearchParams();
+  const { course, type } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
 
   const [notes, setNotes] = useState<Note[] | null>(null);
@@ -26,11 +26,15 @@ export default function NotesPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchNotes = async () => {
-    if (!topicId) return;
+    if (!type) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await getNotesByTopic(topicId as string, type as string);
+      // const res = await getNotesByTopic(topicId as string, type as string);
+      const res = await getNotesByCourse(
+        course as 'CAInter' | 'CAFinal',
+        type as 'all' | 'rtp' | 'mtp' | 'other'
+      );
       if (res.error) setError(res.error);
       setNotes(res.data ?? []);
       console.log(res.data);
@@ -45,7 +49,7 @@ export default function NotesPage() {
 
   useEffect(() => {
     fetchNotes();
-  }, [topicId]);
+  }, [type]);
 
   const fuse = new Fuse(notes ?? [], {
     keys: ['name', 'description', 'fileName'],
@@ -89,13 +93,13 @@ export default function NotesPage() {
     </TouchableOpacity>
   );
 
-  if (!topicId) {
-    return (
-      <SafeAreaView>
-        <Text className="p-4 text-center">Topic ID not found.</Text>
-      </SafeAreaView>
-    );
-  }
+  // if (!topicId) {
+  //   return (
+  //     <SafeAreaView>
+  //       <Text className="p-4 text-center">Topic ID not found.</Text>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>

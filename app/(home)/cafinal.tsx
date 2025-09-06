@@ -44,8 +44,8 @@ const data = [
     icon: require('~/assets/icons/revisions.png'),
     title: 'Revisions',
     description: 'Marked Revision Content',
-    path: '/topiclistpage',
-    params: { course: 'CAFinal', pageType: 'revision' },
+    path: '/videolistpage',
+    params: { course: 'CAFinal', type: 'revision' },
   },
   {
     key: 'new',
