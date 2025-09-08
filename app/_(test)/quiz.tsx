@@ -133,7 +133,7 @@ export default function Quiz() {
 
   const handleEndTest = async () => {
     if (testEnded) return; // <--- prevent double execution
-    console.log('Ending Test');
+    // console.log('Ending Test');
     setTestEnded(true);
     stopTimer();
     // setTestData(undefined);
@@ -144,8 +144,8 @@ export default function Quiz() {
     setCurrentQuestion(testData?.mcqs?.[0]);
     setTempSelection('');
 
-    console.log('answers:' + encodedAnswers);
-    await AsyncStorage.setItem('answers', encodedAnswers);
+    // console.log('answers:' + encodedAnswers);
+    // await AsyncStorage.setItem('answers', encodedAnswers);
     router.replace({
       pathname: '/(home)/result',
       params: { testId: testId, answers: encodedAnswers },

@@ -20,7 +20,7 @@ export default function ResultsPage() {
     answers: string;
   }>();
 
-  console.log('Inside ResultsPage');
+  // console.log('Inside ResultsPage');
 
   const [testData, setTestData] = useState<TestPaper | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,13 +60,7 @@ export default function ResultsPage() {
         setTestData(testRes.data);
         const mcqs: MCQ[] = testRes.data.mcqs;
         const userAnswers: Record<string, string> = JSON.parse(decodeURIComponent(encodedAnswers)); // ✅ decode
-        AsyncStorage.getItem('answers').then((answers) => {
-          if (answers) {
-            console.log('Answers from AsyncStorage:', answers);
-          }
-        });
-
-        console.log('User Answers:', userAnswers);
+        // console.log('User Answers:', userAnswers);
 
         let totalQuestions = 0;
         let correctAnswers = 0;

@@ -9,7 +9,6 @@ import { Button } from '~/components/Button';
 
 import Download from './download';
 
-
 export default function PDFViewer() {
   const { url, name } = useLocalSearchParams<{ url?: string; name?: string }>();
   const { colors, isDarkColorScheme } = useColorScheme();
@@ -46,7 +45,7 @@ export default function PDFViewer() {
 
       {error ? (
         <View className="flex-1 items-center justify-center p-8">
-          <Text className="text-center mb-4">{error}</Text>
+          <Text className="mb-4 text-center">{error}</Text>
           <TouchableOpacity
             onPress={() => {
               setError(null);
@@ -57,8 +56,7 @@ export default function PDFViewer() {
               paddingVertical: 10,
               paddingHorizontal: 20,
               borderRadius: 8,
-            }}
-          >
+            }}>
             <Text style={{ color: isDarkColorScheme ? '#222' : '#fff', fontWeight: '800' }}>
               Retry
             </Text>
@@ -69,7 +67,7 @@ export default function PDFViewer() {
           <Button
             title="Download PDF"
             disabled={isDownloading}
-            icon='download'
+            icon="download"
             onPress={() => {
               setIsDownloading(true);
               setTimeout(() => {
@@ -79,14 +77,14 @@ export default function PDFViewer() {
               // console.log('Downloading PDF...');
             }}
           />
-          {isDownloading && (<Download url={pdfUrl} />)}
+          {isDownloading && <Download url={pdfUrl} />}
           <Pdf
             source={{ uri: pdfUrl, cache: true }}
             style={{ flex: 1, width: Dimensions.get('window').width }}
             trustAllCerts={false}
             onLoadComplete={(numberOfPages, filePath) => {
               setLoading(false);
-              console.log(`Loaded PDF with ${numberOfPages} pages from ${filePath}`);
+              // console.log(`Loaded PDF with ${numberOfPages} pages from ${filePath}`);
             }}
             onError={(err) => {
               console.error(err);
@@ -98,7 +96,6 @@ export default function PDFViewer() {
             }}
             enableAnnotationRendering={false}
           />
-
         </>
       )}
     </View>

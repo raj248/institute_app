@@ -8,45 +8,32 @@ import { getAllTestPapersByTopicId, getTopicById } from '~/lib/api';
 import { TestPaper, Topic } from '~/types/entities';
 import { useColorScheme } from '~/lib/useColorScheme';
 import TestBottomSheet from '~/components/TestBottomSheet';
+import StartTestDialog from '~/components/StartTestDialog';
 
 export default function TestListPage() {
-  const [openSheet, setOpenSheet] = useState(() => () => {});
   const { topicId } = useLocalSearchParams();
   const { colors, isDarkColorScheme } = useColorScheme();
   const [refreshing, setRefreshing] = useState(false);
-
-  const [topic, setTopic] = useState<Topic | null>(null);
+  const [visible, setVisible] = useState(false);
   const [testPapers, setTestPapers] = useState<TestPaper[] | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadTopic = async () => {
-    if (!topicId) return;
-    try {
-      const topicRes = await getTopicById(topicId as string);
-      setTopic(topicRes.data ?? null);
-    } catch (e) {
-      console.error(e);
-    } finally {
-    }
-  };
-
   const loadTestPapers = async () => {
     if (!topicId) return;
-    // setLoading(true);
+    setLoading(true);
     try {
       const res = await getAllTestPapersByTopicId(topicId as string);
       setTestPapers(res.data ?? null);
     } catch (e) {
       console.error(e);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
 
     setRefreshing(false);
   };
 
   useEffect(() => {
-    loadTopic();
     loadTestPapers();
   }, [topicId]);
 
@@ -57,12 +44,6 @@ export default function TestListPage() {
 
   const [query, setQuery] = useState('');
   const [selectedTest, setSelectedTest] = useState<TestPaper | null>(null);
-
-  useEffect(() => {
-    if (selectedTest && openSheet) {
-      openSheet(); // guaranteed to exist by now
-    }
-  }, [selectedTest, openSheet]);
 
   const topicTests = testPapers?.filter((test) => test.topicId === topicId);
 
@@ -90,6 +71,7 @@ export default function TestListPage() {
       onPress={() => {
         setSelectedTest(null);
         setTimeout(() => setSelectedTest(item), 0); // force re-trigger
+        setVisible(true);
       }}>
       <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{item.name}</Text>
       <Text style={{ fontSize: 14, color: isDarkColorScheme ? '#aaa' : '#555', marginBottom: 8 }}>
@@ -148,7 +130,6 @@ export default function TestListPage() {
             refreshing={refreshing}
             onRefresh={() => {
               setRefreshing(true);
-              loadTopic();
               loadTestPapers();
             }}
             colors={[colors.primary]}
@@ -158,7 +139,13 @@ export default function TestListPage() {
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: 16 }}
       />
-      {selectedTest && <TestBottomSheet test={selectedTest} setOpenSheet={setOpenSheet} />}
+      {selectedTest && (
+        <StartTestDialog
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          test={selectedTest}
+        />
+      )}
     </View>
   );
 }

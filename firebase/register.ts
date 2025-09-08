@@ -11,7 +11,7 @@ export async function register(phoneNumber: number) {
     useUserStore.getState().setPhoneNumber(data.phoneNumber);
     await setStoredUserId(id);
     await setStoredPhoneNumber(phoneNumber.toString());
-    console.log('User registered successfully:', data);
+    // console.log('User registered successfully:', data);
   } else {
     console.error('Error registering user:', error);
   }

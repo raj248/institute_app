@@ -37,7 +37,7 @@ export default function NotesPage() {
       );
       if (res.error) setError(res.error);
       setNotes(res.data ?? []);
-      console.log(res.data);
+      // console.log(res.data);
     } catch (err) {
       console.error(err);
       setError('Failed to load notes. Please check your connection and try again.');

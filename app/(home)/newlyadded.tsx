@@ -8,12 +8,13 @@ import VideoCard from '~/components/cards/VideoCard';
 import TestPaperCard from '~/components/cards/TestPaperCard';
 import TestBottomSheet from '~/components/TestBottomSheet';
 import { Stack } from 'expo-router';
+import StartTestDialog from '~/components/StartTestDialog';
 
 const NewlyAddedScreen = () => {
   const { isDarkColorScheme } = useColorScheme();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<(Note | VideoNote | TestPaper)[]>([]);
-  const [openSheet, setOpenSheet] = useState(() => () => {});
+  const [visible, setVisible] = useState(false);
   const [selectedTest, setSelectedTest] = useState<TestPaper | null>(null);
 
   useEffect(() => {
@@ -89,13 +90,22 @@ const NewlyAddedScreen = () => {
                 key={idx}
                 item={item}
                 setSelectedTest={setSelectedTest}
-                openSheet={openSheet}
+                onPress={() => {
+                  setVisible(true);
+                }}
               />
             );
           }
         })}
       </ScrollView>
-      {selectedTest && <TestBottomSheet test={selectedTest} setOpenSheet={setOpenSheet} />}
+      {/* {selectedTest && <TestBottomSheet test={selectedTest} setOpenSheet={setOpenSheet} />} */}
+      {selectedTest && (
+        <StartTestDialog
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          test={selectedTest}
+        />
+      )}
     </>
   );
 };

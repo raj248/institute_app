@@ -86,7 +86,7 @@ export default function CollapsiblePDFViewer({ url, title }: CollapsiblePDFViewe
               trustAllCerts={false}
               onLoadComplete={(pages) => {
                 setLoading(false);
-                console.log(`PDF loaded with ${pages} pages`);
+                // console.log(`PDF loaded with ${pages} pages`);
               }}
               onError={(err) => {
                 console.error(err);

@@ -16,7 +16,7 @@ async function safeFetch<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<{ success: boolean; error?: string; data?: T }> {
-  console.log(`Fetching ${url}`);
+  // console.log(`Fetching ${url}`);
   try {
     const userId = await getStoredUserId();
 

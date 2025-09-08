@@ -18,7 +18,6 @@ export default function VideoPlayer() {
   const { colors } = useColorScheme();
   const webViewRef = useRef<WebViewType>(null);
 
-
   const getEmbeddedUrl = (url?: string) => {
     if (!url) return null;
     try {
@@ -27,7 +26,7 @@ export default function VideoPlayer() {
       } else if (url.includes('youtu.be/')) {
         return url.split('youtu.be/')[1].split(/[?&]/)[0];
       }
-    } catch (e) { }
+    } catch (e) {}
     return null;
   };
 
@@ -37,7 +36,7 @@ export default function VideoPlayer() {
       NavigationBar.setVisibilityAsync('hidden');
       NavigationBar.setBehaviorAsync('overlay-swipe');
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    })
+    });
     return subscribe;
   }, []);
 
@@ -46,7 +45,7 @@ export default function VideoPlayer() {
       NavigationBar.setBehaviorAsync('inset-touch');
       NavigationBar.setVisibilityAsync('visible');
       ScreenOrientation.unlockAsync();
-      console.log("Resetting orientation and status bar")
+      // console.log("Resetting orientation and status bar")
     });
 
     return unsubscribe;
@@ -118,8 +117,8 @@ export default function VideoPlayer() {
         key={'root-status-bar-dark'}
         style={'light'}
         animated={true}
-        backgroundColor={"black"}
-      // hidden={true}
+        backgroundColor={'black'}
+        // hidden={true}
       />
       <Stack.Screen
         options={{
@@ -130,7 +129,7 @@ export default function VideoPlayer() {
         }}
       />
       {videoId ? (
-        <SafeAreaView className="flex-1" style={{ backgroundColor: "#000000" }}>
+        <SafeAreaView className="flex-1" style={{ backgroundColor: '#000000' }}>
           <WebView
             ref={webViewRef}
             originWhitelist={['*']}
@@ -141,17 +140,23 @@ export default function VideoPlayer() {
             onMessage={(event) => {
               const data = JSON.parse(event.nativeEvent.data);
               if (data.type === 'READY') {
-                ToastAndroid.show('Drag from top and/or press Back to exit fullscreen', ToastAndroid.BOTTOM);
-              };
+                ToastAndroid.show(
+                  'Drag from top and/or press Back to exit fullscreen',
+                  ToastAndroid.BOTTOM
+                );
+              }
               if (data.type === 'STATE_CHANGE') {
                 if (data.state.type === 'ended') {
-                  ToastAndroid.show('Drag from top and/or press Back to exit fullscreen', ToastAndroid.BOTTOM);
+                  ToastAndroid.show(
+                    'Drag from top and/or press Back to exit fullscreen',
+                    ToastAndroid.BOTTOM
+                  );
                 }
               }
             }}
             startInLoadingState
             renderLoading={() => (
-              <View className="flex-1 justify-center items-center">
+              <View className="flex-1 items-center justify-center">
                 <ActivityIndicator size="large" color={colors.primary} />
                 <Text className="mt-2">Loading video...</Text>
               </View>
@@ -162,8 +167,8 @@ export default function VideoPlayer() {
           />
         </SafeAreaView>
       ) : (
-        <View className="flex-1 justify-center items-center p-8">
-          <Text className="text-center mb-4">Invalid or missing video URL.</Text>
+        <View className="flex-1 items-center justify-center p-8">
+          <Text className="mb-4 text-center">Invalid or missing video URL.</Text>
         </View>
       )}
     </>
