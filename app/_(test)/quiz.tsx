@@ -102,6 +102,16 @@ export default function Quiz() {
 
   const handleSelectOption = (value: string) => {
     if (!currentQuestion) return;
+
+    if (value === '') {
+      // create a new copy without the current question id
+      const updatedAnswers = { ...answers };
+      delete updatedAnswers[currentQuestion.id];
+      setTempSelection('');
+      setAnswer(updatedAnswers);
+      return;
+    }
+
     setAnswer({ ...answers, [currentQuestion.id]: value });
   };
 
