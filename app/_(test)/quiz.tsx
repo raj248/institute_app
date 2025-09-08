@@ -18,7 +18,7 @@ export default function Quiz() {
   const navigation = useNavigation();
   const { colors, isDarkColorScheme } = useColorScheme();
   const [dialogVisible, setDialogVisible] = React.useState(false);
-  const { testId } = useLocalSearchParams();
+  const { testId, date } = useLocalSearchParams();
   const [testData, setTestData] = useState<TestPaper>();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentQuestion, setCurrentQuestion] = useState<MCQ>();
@@ -98,7 +98,7 @@ export default function Quiz() {
     setCurrentIndex(0);
     setCurrentQuestion(undefined);
     loadPaper();
-  }, [testId]);
+  }, [testId, date]);
 
   const handleSelectOption = (value: string) => {
     if (!currentQuestion) return;

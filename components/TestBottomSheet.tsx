@@ -64,7 +64,10 @@ export default function TestBottomSheet({
         <TouchableOpacity
           onPress={() => {
             bottomSheetModalRef.current?.dismiss();
-            router.push(`../_(test)/quiz?testId=${test.id}`);
+            router.push({
+              pathname: `../_(test)/quiz`,
+              params: { testId: test.id, date: new Date().toISOString() },
+            });
           }}
           className="mt-4 rounded-lg bg-green-600 p-4">
           <Text className="text-center font-medium text-white">Start Test</Text>
