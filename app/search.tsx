@@ -105,14 +105,14 @@ export default function SearchTab() {
                 router.push({ pathname: '/(home)/testlistpage', params: { topicId: item.id } });
               } else if (item.type === 'Note') {
                 // Handle navigation for Note
-                console.log(`Navigating to Note: ${item.title} (ID: ${item.id})`);
+                // console.log(`Navigating to Note: ${item.title} (ID: ${item.id})`);
                 router.push({
                   pathname: '/(home)/pdfviewer',
                   params: { url: item.id, name: item.title },
                 });
               } else if (item.type === 'VideoNote') {
                 // Handle navigation for VideoNote
-                console.log(`Navigating to VideoNote: ${item.title} (ID: ${item.id})`);
+                // console.log(`Navigating to VideoNote: ${item.title} (ID: ${item.id})`);
                 router.push({
                   pathname: '/_(test)/videoplayer',
                   params: { url: item.id, title: item.title },
