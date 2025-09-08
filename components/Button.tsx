@@ -11,24 +11,36 @@ type ButtonProps = {
   fontSize?: number;
   color?: string;
   textColor?: string;
+  elevation?: number;
 } & TouchableOpacityProps;
 
 export const Button = forwardRef<View, ButtonProps>(
   (
-    { title, icon, color, textColor = 'white', valid = false, fontSize = 18, ...touchableProps },
+    {
+      title,
+      icon,
+      color,
+      elevation,
+      textColor = 'white',
+      valid = false,
+      fontSize = 18,
+      ...touchableProps
+    },
     ref
   ) => {
     return (
       <TouchableOpacity
         ref={ref}
         {...touchableProps}
+        activeOpacity={0.7}
         style={[
           touchableProps.style,
           {
             alignItems: 'center',
             backgroundColor: color ? color : valid ? '#ccc' : '#3f3d91',
             borderRadius: 14,
-            elevation: 2,
+            elevation: elevation ?? 2,
+            shadowColor: 'transparent',
             flexDirection: 'row',
             justifyContent: 'center',
             padding: 16,

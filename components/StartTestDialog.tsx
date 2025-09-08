@@ -61,10 +61,18 @@ export default function StartTestDialog({ visible, onDismiss, test }: StartTestD
           </ScrollView>
         </Dialog.Content>
 
-        <Dialog.Actions className="justify-around">
-          <Button onPress={onDismiss} textColor={colors.foreground} title="Cancel" valid={true} />
+        <Dialog.Actions className="flex-row space-x-2">
+          <Button
+            title="Cancel"
+            textColor={colors.foreground}
+            onPress={onDismiss}
+            valid={true}
+            elevation={0}
+            className="flex-1"
+          />
           <Button
             title="Start Test"
+            textColor={isDarkColorScheme ? '#000' : '#fff'}
             onPress={() => {
               onDismiss();
               router.push({
@@ -72,7 +80,8 @@ export default function StartTestDialog({ visible, onDismiss, test }: StartTestD
                 params: { testId: test.id, date: new Date().toISOString() },
               });
             }}
-            textColor={isDarkColorScheme ? '#000' : '#fff'}
+            elevation={0}
+            className="flex-1"
           />
         </Dialog.Actions>
       </Dialog>

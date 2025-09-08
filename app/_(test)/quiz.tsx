@@ -101,7 +101,7 @@ export default function Quiz() {
   }, [testId, date]);
 
   const handleSelectOption = (value: string) => {
-    if (!currentQuestion) return;
+    if (!currentQuestion || isAnswered) return;
 
     if (value === '') {
       // create a new copy without the current question id
