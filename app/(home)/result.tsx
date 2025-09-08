@@ -10,6 +10,7 @@ import { Button } from 'react-native-paper';
 import { getMCQForTest } from '~/lib/api';
 import { MCQ, TestPaper } from '~/types/entities';
 import { ActivityIndicator } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ResultsPage() {
   const { colors, isDarkColorScheme } = useColorScheme();
@@ -58,7 +59,14 @@ export default function ResultsPage() {
 
         setTestData(testRes.data);
         const mcqs: MCQ[] = testRes.data.mcqs;
-        const userAnswers: Record<string, string> = JSON.parse(encodedAnswers);
+        const userAnswers: Record<string, string> = JSON.parse(decodeURIComponent(encodedAnswers)); // ✅ decode
+        AsyncStorage.getItem('answers').then((answers) => {
+          if (answers) {
+            console.log('Answers from AsyncStorage:', answers);
+          }
+        });
+
+        console.log('User Answers:', userAnswers);
 
         let totalQuestions = 0;
         let correctAnswers = 0;

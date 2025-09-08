@@ -13,6 +13,7 @@ import ConfirmExitDialog from '~/components/ConfirmDialog';
 import { Provider as PaperProvider } from 'react-native-paper';
 import CollapsiblePDFViewer from '~/components/CollapsiblePdfViewer';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Quiz() {
   const navigation = useNavigation();
   const { colors, isDarkColorScheme } = useColorScheme();
@@ -38,16 +39,25 @@ export default function Quiz() {
     });
   };
 
-  const startTimer = () => {
-    if (timerInterval) return; // prevent multiple timers
+  const startTimer = (seconds: number) => {
+    stopTimer(); // clear any previous timer
+    setRemainingTime(seconds);
     const interval = setInterval(() => {
-      decrementTime();
+      setRemainingTime((prev) => {
+        if (!prev || prev <= 1) {
+          clearInterval(interval);
+          setTimerInterval(null);
+          handleEndTest(); // end test automatically
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
     setTimerInterval(interval);
   };
+
   const stopTimer = () => {
-    const interval = timerInterval;
-    if (interval) clearInterval(interval);
+    if (timerInterval) clearInterval(timerInterval);
     setTimerInterval(null);
   };
 
@@ -68,10 +78,10 @@ export default function Quiz() {
         setCurrentIndex(0);
         setCurrentQuestion(testRes.data.mcqs?.[0]);
         setAnswer({});
-        // setRemainingTime(0);
         if (testRes.data.timeLimitMinutes) {
-          setRemainingTime(testRes.data.timeLimitMinutes * 60);
-          startTimer();
+          startTimer(testRes.data.timeLimitMinutes * 60);
+        } else {
+          setRemainingTime(0);
         }
       }
     } catch (err) {
@@ -81,9 +91,13 @@ export default function Quiz() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
+    setTestEnded(false);
+    setAnswer({});
+    setCurrentIndex(0);
+    setCurrentQuestion(undefined);
     loadPaper();
-    return () => stopTimer();
   }, [testId]);
 
   const handleSelectOption = (value: string) => {
@@ -114,19 +128,27 @@ export default function Quiz() {
       setCurrentQuestion(mcqs[prevIndex]);
     }
   };
-  const handleEndTest = () => {
+
+  const [testEnded, setTestEnded] = useState(false);
+
+  const handleEndTest = async () => {
+    if (testEnded) return; // <--- prevent double execution
+    console.log('Ending Test');
+    setTestEnded(true);
     stopTimer();
     // setTestData(undefined);
     const jsonAnswers = JSON.stringify(answers);
+    const encodedAnswers = encodeURIComponent(jsonAnswers);
     setCurrentIndex(0);
     setAnswer({});
     setCurrentQuestion(testData?.mcqs?.[0]);
-    setRemainingTime(0);
     setTempSelection('');
 
+    console.log('answers:' + encodedAnswers);
+    await AsyncStorage.setItem('answers', encodedAnswers);
     router.replace({
       pathname: '/(home)/result',
-      params: { testId: testId, answers: jsonAnswers },
+      params: { testId: testId, answers: encodedAnswers },
     });
 
     // working navigation below
