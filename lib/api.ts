@@ -82,7 +82,7 @@ export async function getTopicById(topicId: string): Promise<APIResponse<Topic>>
 export async function getAllTestPapersByTopicId(
   topicId: string
 ): Promise<APIResponse<TestPaper[]>> {
-  return safeFetch(`${BASE_URL}/api/topics/${topicId}/testpapers`);
+  return safeFetch(`${BASE_URL}/api/topics/${topicId}/testpapers?type=published`);
 }
 
 export async function getTestPaperById(testPaperId: string): Promise<APIResponse<TestPaper>> {

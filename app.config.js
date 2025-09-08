@@ -1,3 +1,4 @@
+console.log('EXPO_PUBLIC_API_SERVER_URL', process.env.EXPO_PUBLIC_API_SERVER_URL);
 export default {
   expo: {
     name: 'CA Parveen Jindal Classes',
