@@ -6,7 +6,7 @@ import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { WebView } from 'react-native-webview';
 import type { WebView as WebViewType } from 'react-native-webview';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -15,8 +15,10 @@ import { ToastAndroid } from 'react-native';
 
 export default function VideoPlayer() {
   const { url, title } = useLocalSearchParams<{ url?: string; title?: string }>();
-  const { colors } = useColorScheme();
+  const { colorScheme, colors } = useColorScheme();
   const webViewRef = useRef<WebViewType>(null);
+
+  const insets = useSafeAreaInsets();
 
   const getEmbeddedUrl = (url?: string) => {
     if (!url) return null;
@@ -61,7 +63,14 @@ export default function VideoPlayer() {
 
       return () =>
         navigation.getParent()?.setOptions({
-          tabBarStyle: undefined, // restore default
+          tabBarStyle: {
+            paddingBottom: insets.bottom,
+            height: 65 + insets.bottom,
+            backgroundColor: colorScheme === 'dark' ? '#222' : '#fff',
+            elevation: 5,
+            shadowColor: '#000',
+            shadowOpacity: 0,
+          }, // restore default
         });
     }, [navigation])
   );
