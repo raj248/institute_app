@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { View, ActivityIndicator, BackHandler } from 'react-native';
-import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { Text } from '~/components/nativewindui/Text';
 import HeaderIcons from '~/components/HeaderIcons';
 import { useColorScheme } from '~/lib/useColorScheme';
@@ -41,15 +41,30 @@ export default function VideoPlayer() {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('blur', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
       NavigationBar.setBehaviorAsync('inset-touch');
       NavigationBar.setVisibilityAsync('visible');
       ScreenOrientation.unlockAsync();
-      // console.log("Resetting orientation and status bar")
+
+      // console.log('Resetting orientation and status bar');
     });
 
     return unsubscribe;
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Hide tab bar
+      navigation.getParent()?.setOptions({
+        tabBarStyle: { display: 'none' },
+      });
+
+      return () =>
+        navigation.getParent()?.setOptions({
+          tabBarStyle: undefined, // restore default
+        });
+    }, [navigation])
+  );
 
   const videoId = getEmbeddedUrl(url);
 

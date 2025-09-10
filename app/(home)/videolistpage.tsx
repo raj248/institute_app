@@ -124,7 +124,7 @@ export default function VideoListPage() {
       }}
       onPress={() =>
         router.push({
-          pathname: '../_(test)/videoplayer',
+          pathname: '../(home)/videoplayer',
           params: { url: item.url, title: item.title ?? '' },
         })
       }>

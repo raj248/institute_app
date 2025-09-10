@@ -114,7 +114,7 @@ export default function SearchTab() {
                 // Handle navigation for VideoNote
                 // console.log(`Navigating to VideoNote: ${item.title} (ID: ${item.id})`);
                 router.push({
-                  pathname: '/_(test)/videoplayer',
+                  pathname: '/(home)/videoplayer',
                   params: { url: item.id, title: item.title },
                 });
               }

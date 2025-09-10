@@ -82,6 +82,7 @@ export default function RootLayout() {
                 <Stack.Screen name="testlistpage" options={INDEX_OPTIONS} />
                 <Stack.Screen name="topiclistpage" options={INDEX_OPTIONS} />
                 <Stack.Screen name="videolistpage" options={INDEX_OPTIONS} />
+                <Stack.Screen name="videoplayer" options={{ headerShown: false }} />
                 <Stack.Screen name="result" options={INDEX_OPTIONS} />
 
                 {/* <Stack.Screen name="notifications" options={NOTIFICATION_OPTIONS} /> */}
