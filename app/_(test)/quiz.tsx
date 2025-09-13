@@ -236,6 +236,7 @@ export default function Quiz() {
     );
   }
 
+  // console.log('Test Data NotePath', testData.notePath);
   return (
     <GestureHandlerRootView>
       <PaperProvider>
