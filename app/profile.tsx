@@ -3,6 +3,8 @@ import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUserStore } from '~/stores/user.store';
+import * as Application from 'expo-application';
+import { useEffect, useState } from 'react';
 
 export default function ProfileTab() {
   const { colors } = useColorScheme();
@@ -13,6 +15,12 @@ export default function ProfileTab() {
   const style = 'dylan'; // any style name from docs
   const size = 256;
   const uri = `https://api.dicebear.com/9.x/${style}/png?seed=${encodeURIComponent(userId || seed)}&size=${size}&radius=16`;
+
+  const [appVersion, setAppVersion] = useState<string>('');
+
+  useEffect(() => {
+    setAppVersion(Application.nativeApplicationVersion ?? '1.0.0');
+  }, []);
 
   return (
     <SafeAreaView
@@ -42,8 +50,9 @@ export default function ProfileTab() {
       <Text variant="subhead" className="pb-2">
         Phone Number: {phoneNumber}
       </Text>
+      {/* App version */}
       <Text variant="footnote" className="pb-2">
-        Score History (Coming Soon...)
+        App Version: {appVersion}
       </Text>
       {/* <ThemeToggleSwitch /> */}
     </SafeAreaView>

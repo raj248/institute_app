@@ -22,6 +22,7 @@ export default function HomeTabIndex() {
     const user = await register(Number(phoneNumber));
     if (user.success && user.data) {
       router.replace('/(home)');
+      router.dismissAll();
     } else {
       setError('Error registering user. Please try again. ' + user.error);
     }

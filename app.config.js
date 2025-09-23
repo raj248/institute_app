@@ -3,7 +3,7 @@ export default {
   expo: {
     name: 'CA Parveen Jindal Classes',
     slug: 'pj-classes-lms',
-    version: '1.1.2',
+    version: '1.1.3',
     scheme: 'pj-classes-lms',
     githubUrl: 'https://github.com/raj248/institute_app',
     orientation: 'default',
