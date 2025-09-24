@@ -1,4 +1,5 @@
 console.log('EXPO_PUBLIC_API_SERVER_URL', process.env.EXPO_PUBLIC_API_SERVER_URL);
+console.log('EXPO_PUBLIC_API_SERVER_URL', process.env.GOOGLE_SERVICES_FILE);
 export default {
   expo: {
     name: 'CA Parveen Jindal Classes',
