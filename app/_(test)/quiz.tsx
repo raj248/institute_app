@@ -4,7 +4,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { getMCQForTest } from '~/lib/api';
-import { ActivityIndicator, Icon, MD3DarkTheme, RadioButton } from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Icon,
+  MD3DarkTheme,
+  MD3LightTheme,
+  RadioButton,
+} from 'react-native-paper';
 import { Button } from '~/components/Button';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MCQ, TestPaper } from '~/types/entities';
@@ -317,11 +323,11 @@ export default function Quiz() {
                     label={key.toUpperCase() + '. ' + value}
                     value={key}
                     style={{
-                      backgroundColor: isDarkColorScheme ? '#222' : '#fff',
+                      backgroundColor: '#fff',
                       marginTop: 5,
                       borderRadius: 8,
                     }}
-                    theme={isDarkColorScheme ? MD3DarkTheme : undefined}
+                    theme={MD3LightTheme}
                     rippleColor="transparent"
                   />
                 ))}
@@ -349,12 +355,14 @@ export default function Quiz() {
                     Correct Answer: {currentQuestion?.correctAnswer.toUpperCase()}
                   </Text>
 
-                  <Text variant="caption1" className="mt-2">
-                    <Text className="font-bold" variant={'caption1'}>
-                      Explanation:
-                    </Text>{' '}
-                    {currentQuestion?.explanation}
-                  </Text>
+                  {currentQuestion?.explanation && (
+                    <Text variant="caption1" className="mt-2">
+                      <Text className="font-bold" variant={'caption1'}>
+                        Explanation:
+                      </Text>{' '}
+                      {currentQuestion?.explanation}
+                    </Text>
+                  )}
                 </View>
               )}
             </View>

@@ -25,6 +25,7 @@ export default function CollapsiblePDFViewer({ url, title }: CollapsiblePDFViewe
         borderColor: colors.grey3,
         borderRadius: 12,
         overflow: 'hidden',
+        // marginHorizontal: 15,
       }}>
       {/* Header / Toggle */}
       <TouchableOpacity
@@ -33,7 +34,7 @@ export default function CollapsiblePDFViewer({ url, title }: CollapsiblePDFViewe
           flexDirection: 'row',
           alignItems: 'center',
           padding: 12,
-          backgroundColor: colors.card,
+          backgroundColor: '#3f3d91',
           borderBottomWidth: 1,
           borderBottomColor: colors.grey3,
         }}>
@@ -42,7 +43,7 @@ export default function CollapsiblePDFViewer({ url, title }: CollapsiblePDFViewe
           size={18}
           color={colors.background}
         />
-        <Text style={{ marginLeft: 8, fontWeight: '600' }}>
+        <Text style={{ marginLeft: 8, fontWeight: '600', color: 'white' }}>
           {expanded ? 'Hide Case Study' : 'Show Case Study'}
         </Text>
       </TouchableOpacity>
