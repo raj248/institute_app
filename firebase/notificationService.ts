@@ -140,11 +140,34 @@ export async function notificationListener() {
         data: remoteMessage.data ?? {},
       });
 
-      // Alert.alert(
-      //   remoteMessage.notification?.title ?? 'Notification Opened',
-      //   remoteMessage.notification?.body ?? 'App was opened from a notification.',
-      //   [{ text: 'OK' }]
-      // );
+      if (remoteMessage.data?.type === 'NEW_TEST_PAPER') {
+        router.push({
+          pathname: '/(home)/testlistpage',
+          params: { topicId: remoteMessage.data?.topicId as string },
+        });
+      } else if (remoteMessage.data?.type === 'NEW_NOTE') {
+        router.push({
+          pathname: '/(home)/pdfviewer',
+          params: {
+            url: remoteMessage.data?.fileUrl as string,
+            name: remoteMessage.data?.name as string,
+          },
+        });
+      } else if (remoteMessage.data?.type === 'NEWLY_ADDED_ITEM') {
+        router.push({
+          pathname: '/(home)/newlyadded',
+        });
+      } else if (remoteMessage.data?.type === 'NEW_VIDEO_NOTE') {
+        router.push({
+          pathname: '/(home)/videoplayer',
+          params: {
+            url: remoteMessage.data?.fileUrl as string,
+            title: remoteMessage.data?.name as string,
+          },
+        });
+      } else {
+        Alert.alert('Notification Clicked', 'Fallback Notification Clicked');
+      }
     }
   });
 }
