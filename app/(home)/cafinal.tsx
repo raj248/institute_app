@@ -40,6 +40,14 @@ const data = [
     params: { course: 'CAFinal', type: 'mtp' },
   },
   {
+    key: 'other',
+    icon: require('~/assets/icons/mtp.png'),
+    title: 'Other',
+    description: 'Other Videos',
+    path: '/videolistpage',
+    params: { course: 'CAFinal', type: 'other' },
+  },
+  {
     key: 'revision',
     icon: require('~/assets/icons/revisions.png'),
     title: 'Revisions',

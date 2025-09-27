@@ -80,12 +80,18 @@ export default function VideoListPage() {
           type as 'all' | 'rtp' | 'mtp' | 'revision' | 'other'
         );
         if (res.error) setError(res.error);
+        if (res.success) {
+          setVideos(res.data ?? []);
+          setLoading(false);
+        }
         await fetchVideoDetails(res.data ?? []);
-        setLoading(false);
-        setRefreshing(false);
         return;
       }
       const res = await getVideoNotesByTopicId(topicId as string, type as string);
+      if (res.success) {
+        setVideos(res.data ?? []);
+        setLoading(false);
+      }
       if (res.error) setError(res.error);
       else await fetchVideoDetails(res.data ?? []);
     } catch (err) {
@@ -125,7 +131,7 @@ export default function VideoListPage() {
       onPress={() =>
         router.push({
           pathname: '../(home)/videoplayer',
-          params: { url: item.url, title: item.title ?? '' },
+          params: { url: item.url, title: item.title || item.name || 'Untitled Video' },
         })
       }>
       {item.thumbnail && (
@@ -136,14 +142,8 @@ export default function VideoListPage() {
         />
       )}
       <View style={{ padding: 12 }}>
-        <Text style={{ fontSize: 16, fontWeight: '600' }}>{item.title ?? 'Untitled Video'}</Text>
-        <Text
-          style={{
-            fontSize: 12,
-            color: isDarkColorScheme ? '#aaa' : '#888',
-            marginTop: 4,
-          }}>
-          Tap to play on embedded player
+        <Text style={{ fontSize: 16, fontWeight: '600' }}>
+          {item.title || item.name || 'Untitled Video'}
         </Text>
       </View>
     </TouchableOpacity>

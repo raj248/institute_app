@@ -40,6 +40,14 @@ const data = [
     params: { course: 'CAInter', type: 'mtp' },
   },
   {
+    key: 'other',
+    icon: require('~/assets/icons/mtp.png'),
+    title: 'Other',
+    description: 'Other Videos',
+    path: '/videolistpage',
+    params: { course: 'CAInter', type: 'other' },
+  },
+  {
     key: 'revision',
     icon: require('~/assets/icons/revisions.png'),
     title: 'Revisions',
