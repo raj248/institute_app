@@ -1,17 +1,24 @@
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { getNewlyAddedItems, getNoteById, getVideoNoteById, getTestPaperById } from '~/lib/api';
+import {
+  getNewlyAddedItems,
+  getNoteById,
+  getVideoNoteById,
+  getTestPaperById,
+  getAllCourses,
+  getTopicById,
+} from '~/lib/api';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { Note, VideoNote, TestPaper, NewlyAdded } from '~/types/entities';
 import NoteCard from '~/components/cards/NoteCard';
 import VideoCard from '~/components/cards/VideoCard';
 import TestPaperCard from '~/components/cards/TestPaperCard';
-import TestBottomSheet from '~/components/TestBottomSheet';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import StartTestDialog from '~/components/StartTestDialog';
 
 const NewlyAddedScreen = () => {
   const { isDarkColorScheme } = useColorScheme();
+  const { course } = useLocalSearchParams();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<(Note | VideoNote | TestPaper)[]>([]);
   const [visible, setVisible] = useState(false);
@@ -26,6 +33,8 @@ const NewlyAddedScreen = () => {
         const filtered = all.filter((entry) =>
           ['Note', 'VideoNote', 'TestPaper'].includes(entry.tableName)
         );
+
+        // fetch course
 
         const fetchPromises = filtered.map(async (entry) => {
           if (entry.tableName === 'Note') {
@@ -42,7 +51,29 @@ const NewlyAddedScreen = () => {
 
         const results = await Promise.all(fetchPromises);
         const nonNullItems = results.filter(Boolean) as (Note | VideoNote | TestPaper)[];
-        setItems(nonNullItems);
+
+        const filteredItems = await Promise.all(
+          nonNullItems.map(async (item) => {
+            if ('topicId' in item) {
+              // It's a TestPaper
+              const topic = await getTopicById(item.topicId);
+              console.log(topic);
+              if (!topic) return null;
+              return !course || topic?.data?.courseType === course ? item : null;
+            } else {
+              // Note or VideoNote
+              console.log(item.courseType, course);
+              return !course || item.courseType === course ? item : null;
+            }
+          })
+        );
+        const finalItems = filteredItems.filter((item) => item !== null) as (
+          | Note
+          | VideoNote
+          | TestPaper
+        )[];
+        console.log(finalItems);
+        setItems(filteredItems.filter((item) => item !== null) as (Note | VideoNote | TestPaper)[]);
       } catch (err) {
         console.error(err);
       } finally {

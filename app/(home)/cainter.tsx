@@ -53,6 +53,7 @@ const data = [
     title: 'Newly Added',
     description: 'Latest Updates',
     path: '/newlyadded',
+    params: { course: 'CAInter' },
   },
 ];
 

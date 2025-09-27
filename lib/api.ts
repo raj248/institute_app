@@ -6,6 +6,7 @@ import type {
   VideoNote,
   NewlyAdded,
   SearchResult,
+  Course,
 } from '~/types/entities';
 import type { APIResponse } from '~/types/api';
 import { getStoredUserId } from '~/utils/device-info';
@@ -68,6 +69,9 @@ export async function registerUser(
 }
 
 // ------------------- Courses & Topics --------------------
+export async function getAllCourses(): Promise<APIResponse<Course>> {
+  return safeFetch(`${BASE_URL}/api/courses/all`);
+}
 
 export async function getTopicsByCourseType(courseType: string): Promise<APIResponse<Topic[]>> {
   return safeFetch(`${BASE_URL}/api/courses/${courseType}/topics`);

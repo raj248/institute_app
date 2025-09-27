@@ -83,7 +83,6 @@ export interface VideoNote {
   name: string;
   description?: string;
   type: 'rtp' | 'mtp' | 'revision' | 'other'; // added as per schema
-  topicId: string;
   courseType: 'CAInter' | 'CAFinal';
   title?: string;
   thumbnail?: string;
