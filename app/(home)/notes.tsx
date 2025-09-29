@@ -44,7 +44,7 @@ const Notes = () => {
     <View className="flex-1 items-center justify-center gap-4 px-4">
       <Stack.Screen
         options={{
-          title: 'CA Final',
+          title: course === 'CAInter' ? 'CA Inter' : 'CA Final',
           animation: 'slide_from_right',
           headerRight: () => <HeaderIcons />,
         }}
