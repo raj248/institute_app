@@ -13,8 +13,11 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 
 import { ToastAndroid } from 'react-native';
 import { Button } from '~/components/Button';
+import { usePreventScreenCapture } from 'expo-screen-capture';
 
 export default function VideoPlayer() {
+  usePreventScreenCapture();
+
   const { url, title } = useLocalSearchParams<{ url?: string; title?: string }>();
   const { colorScheme, colors } = useColorScheme();
   const webViewRef = useRef<WebViewType>(null);
@@ -116,7 +119,18 @@ export default function VideoPlayer() {
       <script>
         const player = new Plyr('#player', {
           autoplay: true,
-          controls: ['play', 'pause', 'progress', 'mute', 'volume', 'fullscreen', 'settings'],
+          controls: [ 
+            'play-large', 
+            'play', 
+            'pause', 
+            'progress', 
+            'current-time', 
+            'duration', 
+            'mute', 
+            'volume', 
+            'fullscreen', 
+            'settings'
+          ],
           settings: ['captions', 'quality', 'speed'],
           fullscreen: { enabled: true },
           disableContextMenu: true,

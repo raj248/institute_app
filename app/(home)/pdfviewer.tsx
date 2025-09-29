@@ -8,8 +8,11 @@ import Pdf from 'react-native-pdf';
 import { Button } from '~/components/Button';
 
 import Download from './download';
+import { usePreventScreenCapture } from 'expo-screen-capture';
 
 export default function PDFViewer() {
+  usePreventScreenCapture();
+
   const { url, name } = useLocalSearchParams<{ url?: string; name?: string }>();
   const { colors, isDarkColorScheme } = useColorScheme();
   const [loading, setLoading] = useState(true);

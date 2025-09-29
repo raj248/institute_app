@@ -1,16 +1,12 @@
+import { usePreventScreenCapture } from 'expo-screen-capture';
+
 import { View, TouchableOpacity, Pressable } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import React, { useEffect, useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { getMCQForTest } from '~/lib/api';
-import {
-  ActivityIndicator,
-  Icon,
-  MD3DarkTheme,
-  MD3LightTheme,
-  RadioButton,
-} from 'react-native-paper';
+import { ActivityIndicator, Icon, MD3LightTheme, RadioButton } from 'react-native-paper';
 import { Button } from '~/components/Button';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MCQ, TestPaper } from '~/types/entities';
@@ -19,9 +15,8 @@ import ConfirmExitDialog from '~/components/ConfirmDialog';
 import { Provider as PaperProvider } from 'react-native-paper';
 import CollapsiblePDFViewer from '~/components/CollapsiblePdfViewer';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Quiz() {
-  const navigation = useNavigation();
+  usePreventScreenCapture();
   const { colors, isDarkColorScheme } = useColorScheme();
   const [dialogVisible, setDialogVisible] = React.useState(false);
   const { testId, date } = useLocalSearchParams();
