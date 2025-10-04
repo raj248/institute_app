@@ -254,11 +254,6 @@ export default function VideoPlayer() {
                   }, 3000);
                 }
                 if (data.type === 'STATE_CHANGE') {
-                  if (reloadTimerRef.current) {
-                    clearTimeout(reloadTimerRef.current);
-                    reloadTimerRef.current = null;
-                  }
-                  setShowReload(false); // hide reload when playback starts
                   switch (data.state) {
                     case YTState.ENDED:
                       console.log('Video ended');
@@ -268,6 +263,12 @@ export default function VideoPlayer() {
                       );
                       break;
                     case YTState.PLAYING:
+                      if (reloadTimerRef.current) {
+                        clearTimeout(reloadTimerRef.current);
+                        reloadTimerRef.current = null;
+                      }
+                      setShowReload(false); // hide reload when playback starts
+
                       webViewRef.current?.injectJavaScript(`
                         if (window.player) {
                           player.play();
@@ -278,7 +279,6 @@ export default function VideoPlayer() {
                     case YTState.PAUSED:
                       console.log('Video paused');
                       break;
-                    // etc.
                   }
                 }
                 if (data.type === 'PLYR_LOG') {
