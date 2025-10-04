@@ -161,7 +161,7 @@ export default function VideoListPage() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
         options={{
-          title: 'Video Notes',
+          title: 'Videos',
           animation: 'slide_from_right',
           headerRight: () => <HeaderIcons />,
         }}
