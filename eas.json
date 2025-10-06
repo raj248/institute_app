@@ -12,10 +12,7 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true,
-      "env": {
-        "EXPO_PUBLIC_API_SERVER_URL": "https://lmsapp.caparveenjindal.com"
-      }
+      "autoIncrement": true
     }
   },
   "submit": {
