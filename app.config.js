@@ -4,7 +4,7 @@ export default {
   expo: {
     name: 'CA Parveen Jindal Classes',
     slug: 'pj-classes-lms',
-    version: '1.1.5a',
+    version: '1.1.5b',
     scheme: 'pj-classes-lms',
     githubUrl: 'https://github.com/raj248/institute_app',
     orientation: 'default',
@@ -44,6 +44,7 @@ export default {
       bundleIdentifier: 'com.pjclasses.lms',
     },
     android: {
+      edgeToEdgeEnabled: true,
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff',

@@ -220,10 +220,11 @@ export default function ResultsPage() {
         <Button
           mode="outlined"
           onPress={() => {
-            router.replace('/(home)');
-            router.dismissAll();
+            // router.replace('/(home)');
+            router.back();
+            // router.dismissAll();
           }}>
-          Back to Home
+          Go Back
         </Button>
       </ScrollView>
     </SafeAreaView>
