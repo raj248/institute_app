@@ -216,7 +216,7 @@ export default function VideoPlayer() {
           <WebView
             ref={webViewRef}
             originWhitelist={['*']}
-            source={{ html: htmlContent, baseUrl: 'https://localhost', }}
+            source={{ html: htmlContent, baseUrl: 'https://www.youtube-nocookie.com', }}
             javaScriptEnabled
             domStorageEnabled
             allowsBackForwardNavigationGestures
