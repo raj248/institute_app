@@ -216,7 +216,7 @@ export default function VideoPlayer() {
           <WebView
             ref={webViewRef}
             originWhitelist={['*']}
-            source={{ html: htmlContent }}
+            source={{ html: htmlContent, baseUrl: 'https://localhost', }}
             javaScriptEnabled
             domStorageEnabled
             allowsBackForwardNavigationGestures
